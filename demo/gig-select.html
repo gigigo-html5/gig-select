@@ -1,0 +1,122 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="gig-select">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        ::content option {
+            display: none;
+        }
+
+        .select .item {
+            height: 36px;
+            padding: 6px 27px 6px 15px;
+            line-height: 1.57142857;
+            font-family: sans-serif;
+            font-size: 14px;
+            color: #76838f;
+            background-color: #fff;
+            border: 1px solid #e4eaec;
+            border-radius: 3px;
+            outline: 0;
+            cursor: pointer;
+            position:relative;
+        }
+
+        .select ul {
+            max-height: 200px;
+            overflow: auto;
+            margin: 0;
+            padding: 0;
+            display: none;
+            box-shadow: 0 -3px 12px rgba(0,0,0,.05);
+            position:absolute;
+            min-width: 100%;
+            top: 40px;
+            z-index: 2;
+            background: white;
+            background-clip: padding-box;
+            float: left;
+            border: 1px solid #e4eaec;
+            transition: .25s
+        }
+
+        .select ul.show {
+            display: block;
+        }
+
+        .select li {
+            list-style: none;
+            margin: 0;
+            padding: 6px 15px;
+            color: #76838f;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .select li:hover {
+            background-color: #f3f7f9;
+        }
+
+
+    </style>
+
+    <template>
+        <content select="option" id="c" hidden$="[[contentHidden]]"></content>
+
+        <div class="select">
+            <div class="item" on-click="clickItem">
+                <span>{{itemSelected.label}}</span>
+                <span hidden$="[[itemSelected]]">[[label]]</span>
+            </div>
+
+            <ul class$="[[showSelect]]">
+            <template is="dom-repeat" items="{{items}}">
+                <li on-click="selectItem">{{item.label}}</li>
+            </template>
+            </ul>
+        </div>
+
+        <input type="hidden" name$="[[name]]" value="{{itemSelected.value}}">
+
+
+    </template>
+
+    <script>
+        (function() {
+
+            var self;
+
+            Polymer({
+                is: 'gig-select',
+                ready: function() {
+                    this.items = Polymer.dom(this.$.c).getDistributedNodes();
+                    this.contentHidden = true;
+                },
+                selectItem: function(e) {
+                    this.itemSelected = e.model.item;
+                    this.showSelect = null;
+
+                },
+                clickItem: function() {
+                    this.showSelect = 'show';
+
+                },
+                properties : {
+                    items: {
+                        type: Array
+                    },
+                    itemSelected: {
+                        type: Object
+                    }
+                }
+            })
+        })();
+    </script>
+
+</dom-module>
