@@ -13,6 +13,11 @@
             display: none;
         }
 
+        .select {
+            position:relative;
+        }
+
+
         .select .item {
             height: 36px;
             padding: 6px 27px 6px 15px;
@@ -26,6 +31,7 @@
             outline: 0;
             cursor: pointer;
             position:relative;
+            width: 100%;
         }
 
         .select ul {
@@ -37,7 +43,9 @@
             box-shadow: 0 -3px 12px rgba(0,0,0,.05);
             position:absolute;
             min-width: 100%;
-            top: 40px;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
             z-index: 2;
             background: white;
             background-clip: padding-box;
@@ -47,7 +55,7 @@
         }
 
         .select ul.show {
-            display: block;
+            display: inline-block;
         }
 
         .select li {
@@ -82,8 +90,8 @@
             </ul>
         </div>
 
-        <input type="hidden" name$="[[name]]" value="{{itemSelected.value}}">
 
+        <input type="hidden" name$="[[name]]" value="{{itemSelected.value}}">
 
     </template>
 
@@ -96,7 +104,19 @@
                 is: 'gig-select',
                 ready: function() {
                     this.items = Polymer.dom(this.$.c).getDistributedNodes();
+                    this.checkSelected(this.items);
                     this.contentHidden = true;
+                },
+                checkSelected: function(items) {
+                    for (var i = 0; i < items.length; i++) {
+                        if (items[i].selected) {
+                            this.itemSelected = items[i];
+                        }
+
+                        if (this.value === items[i].value) {
+                            this.itemSelected = items[i];
+                        }
+                    }
                 },
                 selectItem: function(e) {
                     this.itemSelected = e.model.item;
@@ -113,6 +133,9 @@
                     },
                     itemSelected: {
                         type: Object
+                    },
+                    value: {
+                        type: String
                     }
                 }
             })
