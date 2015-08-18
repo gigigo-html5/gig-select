@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-backdrop.html">
 
 <dom-module id="gig-select">
 
@@ -16,7 +17,6 @@
         .select {
             position:relative;
         }
-
 
         .select .item {
             height: 36px;
@@ -75,14 +75,15 @@
     </style>
 
     <template>
-        <content select="option" id="c" hidden$="[[contentHidden]]"></content>
+
+
+        <content select="option" id="c" hidden$="{{contentHidden}}"></content>
 
         <div class="select">
             <div class="item" on-click="clickItem">
                 <span>{{itemSelected.label}}</span>
                 <span hidden$="[[itemSelected]]">[[label]]</span>
             </div>
-
             <ul class$="[[showSelect]]">
             <template is="dom-repeat" items="{{items}}">
                 <li on-click="selectItem">{{item.label}}</li>
@@ -90,8 +91,11 @@
             </ul>
         </div>
 
+        <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
+
 
         <input type="hidden" name$="[[name]]" value="{{itemSelected.value}}">
+
 
     </template>
 
@@ -106,6 +110,7 @@
                     this.items = Polymer.dom(this.$.c).getDistributedNodes();
                     this.checkSelected(this.items);
                     this.contentHidden = true;
+                    this.showSelect = null;
                 },
                 checkSelected: function(items) {
                     for (var i = 0; i < items.length; i++) {
@@ -126,6 +131,9 @@
                 clickItem: function() {
                     this.showSelect = 'show';
 
+                },
+                hideSelect: function() {
+                    this.showSelect = null;
                 },
                 properties : {
                     items: {
