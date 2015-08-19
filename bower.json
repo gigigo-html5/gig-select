@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "polymer": "~1.0.9",
-    "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#~1.0.5"
+    "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#~1.0.5",
+    "components-font-awesome": "~4.4.0"
   }
 }

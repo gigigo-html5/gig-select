@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-backdrop.html">
+<link rel="stylesheet" href="../bower_components/components-font-awesome/css/font-awesome.css">
 
 <dom-module id="gig-select">
 
@@ -32,6 +33,28 @@
             cursor: pointer;
             position:relative;
             width: 100%;
+        }
+
+        .select .item:hover {
+            transition: border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
+            -webkit-transition:  border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
+            background-color: #62a8ea;
+            color: white;
+        }
+
+        .select .item i {
+            position:absolute;
+            right: 10px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            margin-top: -8px;
+            display: block;
+            color: #a3afb7
+        }
+
+        .select .item:hover i {
+            color: white;
         }
 
         .select ul {
@@ -83,10 +106,12 @@
             <div class="item" on-click="clickItem">
                 <span>{{itemSelected.label}}</span>
                 <span hidden$="[[itemSelected]]">[[label]]</span>
+
+                <i class="fa fa-angle-down"></i>
             </div>
             <ul class$="[[showSelect]]">
             <template is="dom-repeat" items="{{items}}">
-                <li on-click="selectItem">{{item.label}}</li>
+                <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">{{item.label}}</li>
             </template>
             </ul>
         </div>
@@ -101,6 +126,12 @@
 
     <script>
         (function() {
+
+            Array.prototype.remove = function(from, to) {
+                var rest = this.slice((to || from) + 1 || this.length);
+                this.length = from < 0 ? this.length + from : from;
+                return this.push.apply(this, rest);
+            };
 
             var self;
 
@@ -124,8 +155,21 @@
                     }
                 },
                 selectItem: function(e) {
-                    this.itemSelected = e.model.item;
-                    this.showSelect = null;
+
+                    if (this.multiple) {
+
+                        if (this.arrayItemsSelected.indexOf(e.model.item) < 0) {
+                            this.arrayItemsSelected.push(e.model.item);
+                        } else {
+                            this.arrayItemsSelected.remove(this.arrayItemsSelected.indexOf(e.model.item))
+                        }
+
+                        this._changeArrayValues();
+
+                    } else {
+                        this.itemSelected = e.model.item;
+                        this.showSelect = null;
+                    }
 
                 },
                 clickItem: function() {
@@ -135,6 +179,24 @@
                 hideSelect: function() {
                     this.showSelect = null;
                 },
+                itemClass: function(item, selectedItem) {
+                    var className = '';
+
+                    console.log(selectedItem);
+
+                    if (this.multiple && this.arrayItemsSelected) {
+                        if (selectedItem.indexOf(item) >= 0) {
+                            className = 'active';
+                        }
+                    }
+
+                    return className;
+
+                },
+                _changeArrayValues: function() {
+
+
+                },
                 properties : {
                     items: {
                         type: Array
@@ -142,8 +204,15 @@
                     itemSelected: {
                         type: Object
                     },
+                    arrayItemsSelected: {
+                        type: Array,
+                        value: []
+                    },
                     value: {
                         type: String
+                    },
+                    multiple: {
+                        type: Boolean
                     }
                 }
             })
