@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-overlay-behavior/iron-overlay-backdrop.html">
+<link rel="stylesheet" href="../components-font-awesome/css/font-awesome.css">
 
-<dom-module id="gig-input">
+<dom-module id="gig-select">
 
     <style>
 
@@ -9,58 +11,114 @@
             font-family: sans-serif;
         }
 
-        input {
-            display: block;
-            width: 100%;
-            height: 36px;
-            padding: 6px 15px;
-            font-size: 14px;
-            line-height: 1.57142857;
-            color: var(--input-color-primary, #76838f);
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid var(--input-border-color, #e4eaec);
-            border-radius: 3px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        }
-        input:focus {
-            border-color: var(--input-border-color-focus, #62a8ea);
-            outline: 0;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(98, 168, 234, .6);
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(98, 168, 234, .6);
-        }
-        input.focus,
-        input:focus {
-            border-color: var(--input-border-color-focus, #62a8ea);
-            -webkit-box-shadow: none;
-            box-shadow: none;
-        }
-        input::-moz-placeholder {
-            color: var(--input-color-placeholder, #a3afb7);
-            opacity: 1;
-        }
-        input:-ms-input-placeholder {
-            color: var(--input-color-placeholder, #a3afb7);
-        }
-        input::-webkit-input-placeholder {
-            color: var(--input-color-placeholder, #a3afb7);
-        }
-        input::-ms-expand {
-            background-color: transparent;
-            border: 0;
-        }
-        input[disabled],
-        input[readonly],
-        fieldset[disabled] .form-control {
-            background-color: var(--input-background-color-disabled, #f3f7f9);
-            opacity: 1;
+        ::content option {
+            display: none;
         }
 
-        input.error {
+        .select {
+            position:relative;
+        }
+
+        .select .item {
+            height: 36px;
+            padding: 6px 27px 6px 15px;
+            line-height: 1.57142857;
+            font-family: sans-serif;
+            font-size: 14px;
+            color: var(--input-color-text, #76838f);
+            background-color: var(--select-background-color, white);
+            border: 1px solid var(--input-border-color, #e4eaec);
+            border-radius: 3px;
+            outline: 0;
+            cursor: pointer;
+            position:relative;
+            width: 100%;
+        }
+
+        .select .item:hover {
+            transition: border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
+            -webkit-transition:  border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
+            background-color: var(--select-background-color-hover, #62a8ea);
+            color: var(--select-color-hover, white);
+        }
+
+        .select .item i {
+            position:absolute;
+            right: 10px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            margin-top: -8px;
+            display: block;
+            color: var(--input-color-text, #76838f);
+        }
+
+        .select .item:hover i {
+            color: var(--select-color-hover, white);
+        }
+
+        .select .item.disabled, .select .item.disabled:hover {
+            background-color: var(--select-background-color-disabled, #f3f7f9);
+            cursor: not-allowed;
+            color: var(--input-color-text, #76838f);
+            pointer-events: none;
+        }
+
+
+        .select ul {
+            max-height: 200px;
+            overflow: auto;
+            margin: 0;
+            padding: 0;
+            display: none;
+            box-shadow: 0 -3px 12px rgba(0,0,0,.05);
+            position:absolute;
+            min-width: 100%;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+            z-index: 2;
+            background: var(--select-background-color, white);
+            background-clip: padding-box;
+            float: left;
+            border: 1px solid var(--input-border-color, #e4eaec);
+            transition: .25s
+        }
+
+        .select ul.show {
+            display: inline-block;
+        }
+
+        .select li {
+            list-style: none;
+            margin: 0;
+            padding: 6px 15px;
+            color: var(--input-color-text, #76838f);
+            cursor: pointer;
+            font-size: 14px;
+            position:relative;
+        }
+
+        .select li:hover {
+            background-color: var(--select-item-background-color-hover, #f3f7f9);
+        }
+
+        .select li i {
+            position:absolute;
+            right: 15px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            margin-top: -8px;
+            color: var(--input-color-text, #76838f);
+            display: none;
+        }
+
+        .select li.active i {
+            display: block;
+        }
+
+        .select .item.error {
             border-color: var(--input-color-error, #f96868);
         }
 
@@ -76,116 +134,200 @@
             font-size: 85%;
         }
 
+
     </style>
 
     <template>
-        <input id="input"
-               autocomplete$="[[autocomplete]]"
+
+        <content select="option" id="c" hidden$="{{contentHidden}}"></content>
+
+        <div class="select">
+            <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
+                <span>{{itemSelected.label}}</span>
+                <span hidden$="[[itemSelected]]">[[label]]</span>
+
+                <i class="fa fa-angle-down"></i>
+            </div>
+            <ul class$="[[showSelect]]">
+                <template is="dom-repeat" items="{{items}}">
+                    <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
+                        <span>{{item.label}}</span>
+                        <i class="fa fa-check"></i>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+        <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
+
+        <input type="hidden"
                required$="[[required]]"
-               placeholder$="[[placeholder]]"
-               readonly$="[[readonly]]"
-               minlength$="[[minlength]]"
-               maxlength$="[[maxlength]]"
-               min$="[[min]]"
-               max$="[[max]]"
-               step$="[[step]]"
+               disabled$="[[disabled]]"
                name$="[[name]]"
-               readonly$="[[readonly]]"
-               type="{{typeFormat}}"
-               value="{{value}}"
-               class$="[[getClassList(errorMessage)]]"
-               on-keyup="keyupEvent">
+               value="{{itemSelected.value}}">
 
         <template is="dom-if" if="[[errorMessage]]">
             <div class="error small">[[errorMessage]]</div>
         </template>
+
+
     </template>
 
     <script>
         (function() {
 
+            Array.prototype.remove = function(from, to) {
+                var rest = this.slice((to || from) + 1 || this.length);
+                this.length = from < 0 ? this.length + from : from;
+                return this.push.apply(this, rest);
+            };
+
             var self;
 
             Polymer({
-                is: 'gig-input',
+                is: 'gig-select',
                 ready: function() {
-                    this._checkType();
+                    this.items = Polymer.dom(this.$.c).getDistributedNodes();
+                    this.checkSelected(this.items);
+                    this.contentHidden = true;
+                    this.showSelect = null;
+                },
+                checkSelected: function(items) {
+
+                    if (this.multiple && this.value) {
+                        this.value = this.value.split(',')
+                    }
+
+                    for (var i = 0; i < items.length; i++) {
+                        if (items[i].selected) {
+                            if (this.multiple) {
+                                this.arrayItemsSelected.push(items[i]);
+                            } else {
+                                this.itemSelected = items[i];
+                            }
+                        }
+
+                        if (this.multiple) {
+                            if (this.value) {
+                                for (var x = 0; x < this.value.length; x++) {
+                                    if (this.value[x] === items[i].value) {
+                                        this.arrayItemsSelected.push(items[i]);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (this.value === items[i].value) {
+                                this.itemSelected = items[i];
+                            }
+                        }
+
+                    }
+
+                    if (this.multiple && this.arrayItemsSelected.length > 0) {
+                        this._changeArrayValues();
+                    }
+                },
+                selectItem: function(e) {
+
+                    if (this.multiple) {
+
+                        if (this.arrayItemsSelected.indexOf(e.model.item) < 0) {
+                            this.arrayItemsSelected.push(e.model.item);
+                        } else {
+                            this.arrayItemsSelected.remove(this.arrayItemsSelected.indexOf(e.model.item))
+                        }
+
+                        this._changeArrayValues();
+
+                    } else {
+                        this.itemSelected = e.model.item;
+                        this.showSelect = null;
+                    }
 
                 },
-                getClassList: function(errorMessage) {
-                    var classList = '';
+                clickItem: function() {
+                    this.showSelect = 'show';
+
+                },
+                hideSelect: function() {
+                    this.showSelect = null;
+                },
+                itemClass: function(item, selectedItem) {
+                    var className = '';
+
+                    if (this.multiple && this.arrayItemsSelected) {
+                        if (this.arrayItemsSelected.indexOf(item) >= 0) {
+                            className = 'active';
+                        }
+                    }
+
+                    return className;
+
+                },
+                getClassItem: function(errorMessage, disabled) {
+
+                    var classList = 'item';
 
                     if (errorMessage) {
-                        classList += 'error';
+                        classList += ' error';
                     }
 
-
-                    console.log(classList);
-
+                    if (disabled) {
+                        classList += ' disabled';
+                    }
 
                     return classList;
-                },
-                keyupEvent: function () {
-                    self = this;
-                    switch(this.type) {
-                        case 'slug':
-                            self.value = self._generatorSlug(self.$.input.value)
-                            break;
-                    }
-                },
-                _generatorSlug: function(str) {
-                    str = str.replace(/^\s+|\s+$/g, '');
-                    str = str.toLowerCase();
 
-                    var from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;";
-                    var to   = "aaaaaeeeeeiiiiooooouuuunc------";
-                    for (var i=0, l=from.length ; i<l ; i++) {
-                        str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+                },
+                _changeArrayValues: function() {
+
+                    var object = {};
+
+                    object.label = '';
+                    object.value = '';
+
+                    for (var i = 0; i < this.arrayItemsSelected.length; i++) {
+                        object.label += this.arrayItemsSelected[i].label+', ';
+                        object.value += this.arrayItemsSelected[i].value+', ';
                     }
 
-                    str = str.replace(/[^a-z0-9 -]/g, '')
-                            .replace(/\s+/g, '-')
-                            .replace(/-+/g, '-');
+                    object.label = object.label.substring(0, object.label.length - 2);
+                    object.value = object.value.substring(0, object.value.length - 2);
 
-                    return str;
+                    this.itemSelected = object;
+
                 },
-                _checkType: function() {
-                    if (this.type === 'slug') {
-                        this.typeFormat = 'text';
-                    } else {
-                        this.typeFormat = this.type;
+                _changeValue : function(value) {
+                    if(value) {
+                        this.errorMessage = null;
                     }
                 },
-                properties: {
-                    name: {
-                        type: String,
-                        notify: true
+                properties : {
+                    items: {
+                        type: Array
+                    },
+                    itemSelected: {
+                        type: Object,
+                        notify: true,
+                        observer: '_changeValue',
+                    },
+                    arrayItemsSelected: {
+                        type: Array,
+                        value: []
                     },
                     value: {
+                        type: String
+                    },
+                    multiple: {
+                        type: Boolean
+                    },
+                    errorMessage: {
                         type: String,
-                        notify: true
-                    },
-                    required: {
-                        type: Boolean,
-                        value: false
-                    },
-                    readonly: {
-                        type: Boolean,
-                        value: false
+                        value: ''
                     },
                     disabled: {
                         type: Boolean,
                         value: false
-                    },
-                    type: {
-                        type: String,
-                        value: 'text',
-                        notify: true
-                    },
-                    typeFormat: {
-                        type: String,
-                        value: 'text',
-                        notify: true
                     }
                 }
             })

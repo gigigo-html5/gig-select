@@ -1,6 +1,13 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-backdrop.html">
-<link rel="stylesheet" href="../bower_components/components-font-awesome/css/font-awesome.css">
+<!--
+ Webcomponents to manage custom select
+ @version v0.0.1 - 2015-08-19
+ @link https://github.com/gigigo-html5/gig-select
+ @author Pedro José Peña Jerez <pedro.jose@gigigo.com>
+ @license MIT License, http://www.opensource.org/licenses/MIT
+ -->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-overlay-behavior/iron-overlay-backdrop.html">
+<link rel="stylesheet" href="../components-font-awesome/css/font-awesome.css">
 
 <dom-module id="gig-select">
 
@@ -149,12 +156,12 @@
                 <i class="fa fa-angle-down"></i>
             </div>
             <ul class$="[[showSelect]]">
-            <template is="dom-repeat" items="{{items}}">
-                <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
-                    <span>{{item.label}}</span>
-                    <i class="fa fa-check"></i>
-                </li>
-            </template>
+                <template is="dom-repeat" items="{{items}}">
+                    <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
+                        <span>{{item.label}}</span>
+                        <i class="fa fa-check"></i>
+                    </li>
+                </template>
             </ul>
         </div>
 
