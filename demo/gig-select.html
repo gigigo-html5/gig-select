@@ -149,18 +149,30 @@
                 <i class="fa fa-angle-down"></i>
             </div>
             <ul class$="[[showSelect]]">
-            <template is="dom-repeat" items="{{items}}">
-                <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
-                    <span>{{item.label}}</span>
-                    <i class="fa fa-check"></i>
-                </li>
-            </template>
+                <template is="dom-repeat" items="{{items}}">
+                    <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
+                        <span class$="[[getClassIcon(item)]]"></span>
+                        <span>{{item.label}}</span>
+                        <i class="fa fa-check"></i>
+                    </li>
+                </template>
+                <template is="dom-if" if="[[selectAll]]">
+                    <li on-click="selectAllHandler">
+                        <template is="dom-if" if="[[!checkSelectAll]]">
+                            <span>[[selectAll]]</span>
+                        </template>
+                        <template is="dom-if" if="[[checkSelectAll]]">
+                            <span>[[unselectAll]]</span>
+                        </template>
+                    </li>
+                </template>
             </ul>
         </div>
 
         <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
 
         <input type="hidden"
+               id="input"
                required$="[[required]]"
                disabled$="[[disabled]]"
                name$="[[name]]"
@@ -186,6 +198,12 @@
 
             Polymer({
                 is: 'gig-select',
+                listeners: {
+                    'change' : 'changeEvent'
+                },
+                changeEvent: function() {
+
+                },
                 ready: function() {
                     this.items = Polymer.dom(this.$.c).getDistributedNodes();
                     this.checkSelected(this.items);
@@ -245,6 +263,16 @@
                     }
 
                 },
+                selectAllHandler : function() {
+
+                    if (!this.checkSelectAll) {
+                        this.arrayItemsSelected = this.items;
+                    } else {
+                        this.arrayItemsSelected = [];
+                    }
+                    this.checkSelectAll = !this.checkSelectAll;
+                    this._changeArrayValues();
+                },
                 clickItem: function() {
                     this.showSelect = 'show';
 
@@ -262,6 +290,17 @@
                     }
 
                     return className;
+
+                },
+                getClassIcon: function(item) {
+
+                    for (var i = 0; i < item.attributes.length; i++) {
+                        var attr = item.attributes[i];
+
+                        if (attr.name === 'icon') {
+                            return attr.value;
+                        }
+                    }
 
                 },
                 getClassItem: function(errorMessage, disabled) {
@@ -286,21 +325,29 @@
                     object.label = '';
                     object.value = '';
 
-                    for (var i = 0; i < this.arrayItemsSelected.length; i++) {
-                        object.label += this.arrayItemsSelected[i].label+', ';
-                        object.value += this.arrayItemsSelected[i].value+', ';
+                    if (!this.arrayItemsSelected.length) {
+                        this.itemSelected = null;
+                    } else {
+
+                        for (var i = 0; i < this.arrayItemsSelected.length; i++) {
+                            object.label += this.arrayItemsSelected[i].label+',';
+                            object.value += this.arrayItemsSelected[i].value+',';
+                        }
+
+                        object.label = object.label.substring(0, object.label.length - 1);
+                        object.value = object.value.substring(0, object.value.length - 1);
+
+                        this.itemSelected = object;
                     }
-
-                    object.label = object.label.substring(0, object.label.length - 2);
-                    object.value = object.value.substring(0, object.value.length - 2);
-
-                    this.itemSelected = object;
 
                 },
                 _changeValue : function(value) {
+                    this.value = this.itemSelected.value;
+
                     if(value) {
                         this.errorMessage = null;
                     }
+                    this.fire('change');
                 },
                 properties : {
                     items: {
@@ -316,7 +363,8 @@
                         value: []
                     },
                     value: {
-                        type: String
+                        type: String,
+                        reflectToAttribute: true
                     },
                     multiple: {
                         type: Boolean
@@ -326,6 +374,10 @@
                         value: ''
                     },
                     disabled: {
+                        type: Boolean,
+                        value: false
+                    },
+                    checkSelectAll: {
                         type: Boolean,
                         value: false
                     }

@@ -4,7 +4,8 @@
   "description": "Webcomponents to manage custom select",
   "main": "gruntfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "./node_modules/.bin/grunt release"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,11 @@
     "grunt-conventional-changelog": "0.0.12",
     "grunt-release": "~0.3.3",
     "grunt-vulcanize": "^1.0.0",
+    "grunt-cli": "^0.1.13",
     "karma": "~0.8.0"
   },
-  "homepage": "https://github.com/gigigo-html5/gig-select"
+  "homepage": "https://github.com/gigigo-html5/gig-select",
+  "dependencies": {
+
+  }
 }
