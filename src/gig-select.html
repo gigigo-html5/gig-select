@@ -1,6 +1,14 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-overlay-behavior/iron-overlay-backdrop.html">
 <link rel="stylesheet" href="../components-font-awesome/css/font-awesome.css">
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+<script>
+  WebFont.load({
+    google: {
+      families: ['Roboto:300,400']
+    }
+  });
+</script>
 
 <dom-module id="gig-select">
 
@@ -8,7 +16,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: sans-serif;
+            font-family: Roboto, sans-serif;
         }
 
         ::content option {
@@ -23,7 +31,8 @@
             height: 36px;
             padding: 6px 27px 6px 15px;
             line-height: 1.57142857;
-            font-family: sans-serif;
+            font-family: Roboto, sans-serif;
+            font-weight: 300;
             font-size: 14px;
             color: var(--input-color-text, #76838f);
             background-color: var(--select-background-color, white);
@@ -97,6 +106,7 @@
             cursor: pointer;
             font-size: 14px;
             position:relative;
+            font-weight: 300;
         }
 
         .select li:hover {
