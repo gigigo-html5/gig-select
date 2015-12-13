@@ -42,6 +42,16 @@
             cursor: pointer;
             position:relative;
             width: 100%;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        }
+
+        .select .placeholder {
+            color: var(--select-color-placeholder, #a3afb7);
+        }
+
+        .select .item:hover .placeholder {
+            color: var(--select-color-placeholder, white);
         }
 
         .select .item:hover {
@@ -154,7 +164,7 @@
         <div class="select">
             <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
                 <span>{{itemSelected.label}}</span>
-                <span hidden$="[[itemSelected]]">[[label]]</span>
+                <span class="placeholder" hidden$="[[itemSelected]]">[[label]]</span>
 
                 <i class="fa fa-angle-down"></i>
             </div>
