@@ -1,6 +1,6 @@
 {
   "name": "gig-select",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/gigigo-html5/gig-select",
   "authors": [
     "Pedro Peña <pedro.jose@gigigo.com>"
@@ -14,8 +14,8 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "~1.0.9",
+    "polymer": "~1.2.0",
     "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#~1.0.5",
-    "components-font-awesome": "~4.4.0"
+    "components-font-awesome": "~4.5.0"
   }
 }

@@ -10,6 +10,21 @@
   });
 </script>
 
+<dom-module id="html-echo">
+    <template></template>
+    <script>
+    Polymer({
+        is: 'html-echo',
+        ready: function() {
+            this.htmlChanged();
+        },
+        htmlChanged: function() {
+            this.innerHTML = this.html;
+        }
+      });
+    </script>
+</dom-module>
+
 <dom-module id="gig-select">
 
     <style>
@@ -42,16 +57,9 @@
             cursor: pointer;
             position:relative;
             width: 100%;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        }
-
-        .select .placeholder {
-            color: var(--select-color-placeholder, #a3afb7);
-        }
-
-        .select .item:hover .placeholder {
-            color: var(--select-color-placeholder, white);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .select .item:hover {
@@ -154,6 +162,11 @@
             font-size: 85%;
         }
 
+        .html {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
 
     </style>
 
@@ -164,16 +177,21 @@
         <div class="select">
             <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
                 <span>{{itemSelected.label}}</span>
-                <span class="placeholder" hidden$="[[itemSelected]]">[[label]]</span>
+                <span hidden$="[[itemSelected]]">[[label]]</span>
 
                 <i class="fa fa-angle-down"></i>
             </div>
             <ul class$="[[showSelect]]">
                 <template is="dom-repeat" items="{{items}}">
                     <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
-                        <span class$="[[getClassIcon(item)]]"></span>
-                        <span>{{item.label}}</span>
-                        <i class="fa fa-check"></i>
+                        <template is="dom-if" if="{{html}}">
+                            <div class="html"><html-echo html="{{item.innerHTML}}"></html-echo>
+                        </template>
+                        <template is="dom-if" if="{{!html}}">
+                            <span class$="[[getClassIcon(item)]]"></span>
+                            <span>{{item.label}}</span>
+                            <i class="fa fa-check"></i>
+                        </template>
                     </li>
                 </template>
                 <template is="dom-if" if="[[selectAll]]">
@@ -398,6 +416,10 @@
                         value: false
                     },
                     checkSelectAll: {
+                        type: Boolean,
+                        value: false
+                    },
+                    html: {
                         type: Boolean,
                         value: false
                     }
