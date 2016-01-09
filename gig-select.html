@@ -339,11 +339,13 @@
                 },
                 getClassIcon: function(item) {
 
-                    for (var i = 0; i < item.attributes.length; i++) {
-                        var attr = item.attributes[i];
+                    if (item.attributes) {
+                        for (var i = 0; i < item.attributes.length; i++) {
+                            var attr = item.attributes[i];
 
-                        if (attr.name === 'icon') {
-                            return attr.value;
+                            if (attr.name === 'icon') {
+                                return attr.value;
+                            }
                         }
                     }
 
