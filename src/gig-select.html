@@ -1,29 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-overlay-behavior/iron-overlay-backdrop.html">
-<link rel="stylesheet" href="../components-font-awesome/css/font-awesome.css">
-<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-<script>
-  WebFont.load({
-    google: {
-      families: ['Roboto:300,400']
-    }
-  });
-</script>
+<link rel="import" href="../gig-html/gig-html.html">
+<link rel="stylesheet" href="../components-font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../font-roboto/dist/styles/roboto.min.css">
 
-<dom-module id="html-echo">
-    <template></template>
-    <script>
-    Polymer({
-        is: 'html-echo',
-        ready: function() {
-            this.htmlChanged();
-        },
-        htmlChanged: function() {
-            this.innerHTML = this.html;
-        }
-      });
-    </script>
-</dom-module>
 
 <dom-module id="gig-select">
 
@@ -168,6 +148,47 @@
             text-align: center;
         }
 
+        .list-group {
+            border-radius: 3px;
+            background-color: #f3f7f9;
+            margin-bottom: 10px;
+            list-style: none;
+            padding: 0;
+            font-weight: 300px;
+            font-size: 12px;
+        }
+
+
+
+        .list-group-item {
+            border-radius: 3px;
+            border-bottom: 1px solid rgba(0,0,0,.075);
+            color: #76838f;
+            position:relative;
+            padding: 10px 15px;
+            margin: 0;
+            margin-bottom: -1px;
+        }
+        .list-group-item:first-child {
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        .list-group-item:nth-last-child(2) {
+            margin-bottom: 0;
+            border-bottom-right-radius: 3px;
+            border-bottom-left-radius: 3px;
+            border-bottom: 0;
+        }
+
+        .list-group-item .delete {
+            float: right;
+            cursor: pointer;
+            padding: 5px;
+            position:relative;
+            top: -5px;
+        }
+
     </style>
 
     <template>
@@ -181,11 +202,11 @@
 
                 <i class="fa fa-angle-down"></i>
             </div>
-            <ul class$="[[showSelect]]">
+            <ul class$="[[showSelect]]" style$="{{getHeight(height)}}">
                 <template is="dom-repeat" items="{{items}}">
                     <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
                         <template is="dom-if" if="{{html}}">
-                            <div class="html"><html-echo html="{{item.innerHTML}}"></html-echo>
+                            <div class="html"><gig-html html="{{item.innerHTML}}"></gig-html>
                         </template>
                         <template is="dom-if" if="{{!html}}">
                             <span class$="[[getClassIcon(item)]]"></span>
@@ -220,19 +241,19 @@
             <div class="error small">[[errorMessage]]</div>
         </template>
 
+        <template is="dom-if" if="[[multipleClass]]">
+            <ul class="list-group">
+                <template is="dom-repeat" items="{{arrayItemsSelected}}">
+                    <li class="list-group-item">{{item.label}}<span class="delete" on-click="selectItem"><i class="fa fa-times"></i></span></li>
+                </template>
+            </ul>
+        </template>
+
 
     </template>
 
     <script>
         (function() {
-
-            Array.prototype.remove = function(from, to) {
-                var rest = this.slice((to || from) + 1 || this.length);
-                this.length = from < 0 ? this.length + from : from;
-                return this.push.apply(this, rest);
-            };
-
-            var self;
 
             Polymer({
                 is: 'gig-select',
@@ -244,36 +265,36 @@
                 },
                 ready: function() {
                     this.items = Polymer.dom(this.$.c).getDistributedNodes();
-                    this.checkSelected(this.items);
+                    this.checkSelected();
                     this.contentHidden = true;
                     this.showSelect = null;
                 },
-                checkSelected: function(items) {
+                checkSelected: function() {
 
+                    this.values = [];
                     if (this.multiple && this.value) {
-                        this.value = this.value.split(',')
+                        this.values = this.value.split(',')
                     }
 
-                    for (var i = 0; i < items.length; i++) {
-                        if (items[i].selected) {
+                    for (var i = 0; i < this.items.length; i++) {
+                        if (this.items[i].selected) {
                             if (this.multiple) {
-                                this.arrayItemsSelected.push(items[i]);
+                                this.arrayItemsSelected.push(this.items[i]);
                             } else {
-                                this.itemSelected = items[i];
+                                this.itemSelected = this.items[i];
                             }
                         }
-
                         if (this.multiple) {
-                            if (this.value) {
-                                for (var x = 0; x < this.value.length; x++) {
-                                    if (this.value[x] === items[i].value) {
-                                        this.arrayItemsSelected.push(items[i]);
+                            if (this.values) {
+                                for (var x = 0; x < this.values.length; x++) {
+                                    if (this.values[x] === this.items[i].value) {
+                                        this.arrayItemsSelected.push(this.items[i]);
                                     }
                                 }
                             }
                         } else {
-                            if (this.value === items[i].value) {
-                                this.itemSelected = items[i];
+                            if (this.value === this.items[i].value) {
+                                this.itemSelected = this.items[i];
                             }
                         }
 
@@ -286,11 +307,10 @@
                 selectItem: function(e) {
 
                     if (this.multiple) {
-
                         if (this.arrayItemsSelected.indexOf(e.model.item) < 0) {
-                            this.arrayItemsSelected.push(e.model.item);
+                            this.push('arrayItemsSelected', e.model.item);
                         } else {
-                            this.arrayItemsSelected.remove(this.arrayItemsSelected.indexOf(e.model.item))
+                            this.splice('arrayItemsSelected', this.arrayItemsSelected.indexOf(e.model.item), 1);
                         }
 
                         this._changeArrayValues();
@@ -300,6 +320,13 @@
                         this.showSelect = null;
                     }
 
+                    if (this.multipleClass) {
+                        this.hideSelect();
+                    }
+
+                },
+                getHeight: function(height) {
+                    return 'max-height:'+height+'px';
                 },
                 selectAllHandler : function() {
 
@@ -328,20 +355,9 @@
                     }
 
                     return className;
-
                 },
                 getClassIcon: function(item) {
-
-                    if (item.attributes) {
-                        for (var i = 0; i < item.attributes.length; i++) {
-                            var attr = item.attributes[i];
-
-                            if (attr.name === 'icon') {
-                                return attr.value;
-                            }
-                        }
-                    }
-
+                    return item.getAttribute('icon');
                 },
                 getClassItem: function(errorMessage, disabled) {
 
@@ -382,6 +398,8 @@
 
                 },
                 _changeValue : function(value) {
+
+                    if (this.itemSelected)
                     this.value = this.itemSelected.value;
 
                     if(value) {
@@ -400,11 +418,14 @@
                     },
                     arrayItemsSelected: {
                         type: Array,
-                        value: []
+                        value: function () {
+                            return []
+                        }
                     },
                     value: {
                         type: String,
-                        reflectToAttribute: true
+                        reflectToAttribute: true,
+                        notify: true
                     },
                     multiple: {
                         type: Boolean
@@ -424,7 +445,11 @@
                     html: {
                         type: Boolean,
                         value: false
-                    }
+                    },
+                    multipleClass: {
+                        type: Boolean,
+                        value: false
+                    },
                 }
             })
         })();
