@@ -1,6 +1,6 @@
 <!--
  Webcomponents to manage custom select
- @version v0.0.5 - 2016-01-14
+ @version v0.0.6 - 2016-01-16
  @link https://github.com/gigigo-html5/gig-select
  @author Pedro José Peña Jerez <pedro.jose@gigigo.com>
  @license MIT License, http://www.opensource.org/licenses/MIT
@@ -196,6 +196,25 @@
             top: -5px;
         }
 
+        .search {
+            padding: 5px;
+        }
+
+        .search input {
+            border: 1px solid #e4eaec;
+            border-radius: 3px;
+            background-color: white;
+            color: #76838f;
+            font-size: 14px;
+            font-family: Roboto,sans-serif;
+            padding: 4px;
+            -webkit-appearance: none;
+            width: 100%;
+            line-height: 18px;
+            outline: none;
+
+        }
+
     </style>
 
     <template>
@@ -210,7 +229,12 @@
                 <i class="fa fa-angle-down"></i>
             </div>
             <ul class$="[[showSelect]]" style$="{{getHeight(height)}}">
-                <template is="dom-repeat" items="{{items}}">
+                <template is="dom-if" if="[[search]]">
+                    <div class="search">
+                        <input type="search" value="{{filterVal::input}}">
+                    </div>
+                </template>
+                <template is="dom-repeat" items="{{items}}" filter="{{_filter(filterVal)}}">
                     <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
                         <template is="dom-if" if="{{html}}">
                             <div class="html"><gig-html html="{{item.innerHTML}}"></gig-html>
@@ -275,6 +299,13 @@
                     this.checkSelected();
                     this.contentHidden = true;
                     this.showSelect = null;
+                },
+                _filter: function(val) {
+                    return function(item) {
+                        if (!val) return true;
+                        if (!item) return false;
+                        return (item.label  && ~item.label.toLowerCase().indexOf(val.toLowerCase()));
+                    };
                 },
                 checkSelected: function() {
 
@@ -457,6 +488,10 @@
                         type: Boolean,
                         value: false
                     },
+                    search: {
+                        type: Boolean,
+                        value: false
+                    }
                 }
             })
         })();
