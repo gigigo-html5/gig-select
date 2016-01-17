@@ -8,6 +8,7 @@
     <title>Gig Component fieldMap Demo</title>
     <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="/demo/gig-select.html">
+    <link rel="import" href="../bower_components/gig-form/gig-form.html">
 
     <style is="custom-style">
         body {
@@ -50,19 +51,22 @@
 <body>
     <div class="field">
         <label>Select one</label>
-        <gig-select label="Select a city" value="malaga">
-            <option value="malaga">Málaga</option>
-            <option value="madrid">Madrid</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="valencia">Valencia</option>
-        </gig-select>
+        <gig-form>
+            <gig-select required label="Select a city" name="city">
+                <option value="malaga">Málaga</option>
+                <option value="madrid">Madrid</option>
+                <option value="barcelona">Barcelona</option>
+                <option value="valencia">Valencia</option>
+            </gig-select>
+            <button>Enviar</button>
+        </gig-form>
 
     </div>
 
     <div class="field">
         <label>Select wit value select</label>
         <gig-select label="Select a city">
-            <option value="malaga">Málaga</option>
+            <option value="malaga" selected>Málaga</option>
             <option value="madrid">Madrid</option>
             <option value="barcelona">Barcelona</option>
             <option value="valencia">Valencia</option>

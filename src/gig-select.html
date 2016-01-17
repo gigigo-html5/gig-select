@@ -3,7 +3,8 @@
 <link rel="import" href="../gig-html/gig-html.html">
 <link rel="stylesheet" href="../components-font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../font-roboto/dist/styles/roboto.min.css">
-
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
 
 <dom-module id="gig-select">
 
@@ -284,6 +285,10 @@
                 listeners: {
                     'change' : 'changeEvent'
                 },
+                behaviors: [
+                    Polymer.IronFormElementBehavior,
+                    Polymer.IronValidatableBehavior
+                ],
                 changeEvent: function() {
 
                 },
@@ -292,6 +297,21 @@
                     this.checkSelected();
                     this.contentHidden = true;
                     this.showSelect = null;
+                },
+                _getValidity: function() {
+                    return this.checkRequired();
+                },
+                checkRequired: function() {
+                    this.errorMessage = null;
+                    this.invalid = false;
+
+                    if (this.required && !this.value) {
+                        this.errorMessage = 'Field required';
+                        this.invalid = true;
+                        return false;
+                    } else {
+                        return true;
+                    }
                 },
                 _filter: function(val) {
                     return function(item) {
