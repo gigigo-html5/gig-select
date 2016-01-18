@@ -293,10 +293,17 @@
 
                 },
                 ready: function() {
-                    this.items = Polymer.dom(this.$.c).getDistributedNodes();
+                    this.items = this.getInitialContent();
                     this.checkSelected();
                     this.contentHidden = true;
                     this.showSelect = null;
+                },
+                getInitialContent: function() {
+                    if (Polymer.dom(this.$.c).getDistributedNodes().length > 0) {
+                        return Polymer.dom(this.$.c).getDistributedNodes()
+                    } else {
+                        return [];
+                    }
                 },
                 _getValidity: function() {
                     return this.checkRequired();
@@ -408,7 +415,24 @@
                     return className;
                 },
                 getClassIcon: function(item) {
+                    if (!this.isElement(item)) {
+                        return null;
+                    }
                     return item.getAttribute('icon');
+                },
+                isElement: function(obj) {
+                  try {
+                    //Using W3 DOM2 (works for FF, Opera and Chrom)
+                    return obj instanceof HTMLElement;
+                  }
+                  catch(e){
+                    //Browsers not supporting W3 DOM2 don't have HTMLElement and
+                    //an exception is thrown and we end up here. Testing some
+                    //properties that all elements have. (works on IE7)
+                    return (typeof obj==="object") &&
+                      (obj.nodeType===1) && (typeof obj.style === "object") &&
+                      (typeof obj.ownerDocument ==="object");
+                  }
                 },
                 getClassItem: function(errorMessage, disabled) {
 
@@ -458,9 +482,18 @@
                     }
                     this.fire('change');
                 },
+                changeArray: function(value) {
+                    this.set('items', value);
+                    this.checkSelected();
+                },
                 properties : {
                     items: {
-                        type: Array
+                        type: Array,
+                        value: function () {
+                            return []
+                        },
+                        notify: true,
+                        observer: 'changeArray'
                     },
                     itemSelected: {
                         type: Object,
