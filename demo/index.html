@@ -49,23 +49,11 @@
     </style>
 </head>
 <body>
-    <div class="field">
-        <label>Select one</label>
-        <gig-form>
-            <gig-select required label="Select a city" name="city">
-                <option value="malaga">Málaga</option>
-                <option value="madrid">Madrid</option>
-                <option value="barcelona">Barcelona</option>
-                <option value="valencia">Valencia</option>
-            </gig-select>
-            <button>Enviar</button>
-        </gig-form>
 
-    </div>
 
     <div class="field">
         <label>Select wit value select</label>
-        <gig-select label="Select a city">
+        <gig-select label="Select a city" multiple>
             <option value="malaga" selected>Málaga</option>
             <option value="madrid">Madrid</option>
             <option value="barcelona">Barcelona</option>
@@ -74,100 +62,7 @@
 
     </div>
 
-    <div class="field">
-        <label>Select multiple</label>
-        <gig-select label="Select cities" multiple>
-            <option value="malaga">Málaga</option>
-            <option value="madrid">Madrid</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="valencia">Valencia</option>
-        </gig-select>
 
-    </div>
-
-    <div class="field">
-        <label>Select multiple with value select</label>
-        <gig-select label="Select cities" name="cities" multiple value="malaga">
-            <option value="malaga">Málaga</option>
-            <option value="madrid">Madrid</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="valencia">Valencia</option>
-        </gig-select>
-
-    </div>
-
-    <div class="field">
-        <label>Select with icon</label>
-        <gig-select label="Select a option">
-            <option icon="fa fa-home" value="home">Home</option>
-            <option icon="fa fa-envelope" value="contact">Contact</option>
-            <option icon="fa fa-cog" value="setting">Settings</option>
-        </gig-select>
-
-    </div>
-
-
-    <div class="field">
-        <label>Select with html</label>
-        <gig-select label="Select a option" name="citiesVarius" html height="300" multiple multiple-class>
-            <option value="madrid" label="Madrid">
-                <div class="box">
-                    <div class="image">
-                        <img src="http://static.panoramio.com/photos/large/89891283.jpg">
-                    </div>
-                    <div class="text">
-                        <p><b>Madrid</b></p>
-                        <p>Comunidad de Madrid</p>
-                    </div>
-                </div>
-            </option>
-            <option value="madrid" label="Barcelona">
-                <div class="box">
-                    <div class="image">
-                        <img src="http://static.panoramio.com/photos/large/1296634.jpg">
-                    </div>
-                    <div class="text">
-                        <p><b>Barcelona</b></p>
-                        <p>Catalunya</p>
-                    </div>
-                </div>
-            </option>
-            <option value="madrid" label="Valencia">
-                <div class="box">
-                    <div class="image">
-                        <img src="http://static.panoramio.com/photos/large/67739499.jpg">
-                    </div>
-                    <div class="text">
-                        <p><b>Valencia</b></p>
-                        <p>Comunidad Valenciana</p>
-                    </div>
-                </div>
-            </option>
-            <option value="madrid" label="Zaragoza">
-                <div class="box">
-                    <div class="image">
-                        <img src="http://static.panoramio.com/photos/large/9893805.jpg">
-                    </div>
-                    <div class="text">
-                        <p><b>Zaragoza</b></p>
-                        <p>Aragón</p>
-                    </div>
-                </div>
-            </option>
-        </gig-select>
-
-    </div>
-
-    <div class="field">
-        <label>Select with search</label>
-        <gig-select label="Select a city" search>
-            <option value="malaga">Málaga</option>
-            <option value="madrid">Madrid</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="valencia">Valencia</option>
-        </gig-select>
-
-    </div>
 
 </body>
 

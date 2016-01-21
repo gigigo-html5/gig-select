@@ -1,7 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-backdrop.html">
 <link rel="import" href="../bower_components/gig-html/gig-html.html">
-<link rel="stylesheet" href="../bower_components/components-font-awesome/css/font-awesome.min.css">
+<link rel="import" href="../bower_components/gig-icon/gig-icon.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="stylesheet" href="../bower_components/font-roboto/dist/styles/roboto.min.css">
 <link rel="import" href="../bower_components/iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
@@ -112,7 +113,7 @@
             background-color: var(--select-item-background-color-hover, #f3f7f9);
         }
 
-        .select li i {
+        .select li iron-icon {
             position:absolute;
             right: 15px;
             top: 50%;
@@ -123,7 +124,7 @@
             display: none;
         }
 
-        .select li.active i {
+        .select li.active iron-icon {
             display: block;
         }
 
@@ -236,7 +237,7 @@
                         <template is="dom-if" if="{{!html}}">
                             <span class$="[[getClassIcon(item)]]"></span>
                             <span>{{item.label}}</span>
-                            <i class="fa fa-check"></i>
+                            <iron-icon icon="fa:check"></iron-icon>
                         </template>
                     </li>
                 </template>
@@ -337,7 +338,9 @@
                     for (var i = 0; i < this.items.length; i++) {
                         if (this.items[i].selected) {
                             if (this.multiple) {
-                                this.arrayItemsSelected.push(this.items[i]);
+                                if (this.arrayItemsSelected.indexOf(this.items[i]) < 0) {
+                                    this.arrayItemsSelected.push(this.items[i]);
+                                }
                             } else {
                                 this.itemSelected = this.items[i];
                             }
@@ -346,7 +349,10 @@
                             if (this.values) {
                                 for (var x = 0; x < this.values.length; x++) {
                                     if (this.values[x] === this.items[i].value) {
-                                        this.arrayItemsSelected.push(this.items[i]);
+
+                                        if (this.arrayItemsSelected.indexOf(this.items[i]) < 0) {
+                                            this.arrayItemsSelected.push(this.items[i]);
+                                        }
                                     }
                                 }
                             }
@@ -357,6 +363,7 @@
                         }
 
                     }
+
 
                     if (this.multiple && this.arrayItemsSelected.length > 0) {
                         this._changeArrayValues();
@@ -459,7 +466,6 @@
                     if (!this.arrayItemsSelected.length) {
                         this.itemSelected = null;
                     } else {
-
                         for (var i = 0; i < this.arrayItemsSelected.length; i++) {
                             object.label += this.arrayItemsSelected[i].label+',';
                             object.value += this.arrayItemsSelected[i].value+',';
