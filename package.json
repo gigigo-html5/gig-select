@@ -1,6 +1,6 @@
 {
   "name": "gig-select",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Webcomponents to manage custom select",
   "main": "gruntfile.js",
   "scripts": {

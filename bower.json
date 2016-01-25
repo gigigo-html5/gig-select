@@ -1,6 +1,6 @@
 {
   "name": "gig-select",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "homepage": "https://github.com/gigigo-html5/gig-select",
   "authors": [
     "Pedro Peña <pedro.jose@gigigo.com>"
@@ -18,7 +18,6 @@
     "iron-form-element-behavior": "PolymerElements/iron-form-element-behavior#~1.0.4",
     "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#~1.1.2",
     "iron-validatable-behavior": "PolymerElements/iron-validatable-behavior#~1.0.4",
-    "font-roboto": "~0.0.2",
     "gig-html": "~0.0.1",
     "gig-icon": "~0.0.1"
   }
