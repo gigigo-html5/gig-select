@@ -308,7 +308,6 @@
                 },
                 ready: function() {
                     this.items = this.getInitialContent();
-                    this.checkSelected();
                     this.contentHidden = true;
                     this.showSelect = null;
                 },
@@ -374,20 +373,19 @@
                                 this.itemSelected = this.items[i];
                             }
                         }
-                        if (this.multiple) {
-                            if (this.values) {
-                                for (var x = 0; x < this.values.length; x++) {
-                                    if (this.values[x] === this.items[i].value) {
-
-                                        if (this.arrayItemsSelected.indexOf(this.items[i]) < 0) {
-                                            this.arrayItemsSelected.push(this.items[i]);
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
+                        if (!this.multiple) {
                             if (this.value === this.items[i].value) {
                                 this.itemSelected = this.items[i];
+                            }
+                        }
+                    }
+
+                    if (this.values.length && this.multiple) {
+                        for (var i = 0; i < this.values.length; i++) {
+                            var index = this.checkIfExists(this.items, this.values[i]);
+
+                            if (index != null) {
+                                this.push('arrayItemsSelected', this.items[index]);
                             }
                         }
                     }
@@ -511,8 +509,10 @@
                     this.fire('change', {value: this.value});
                 },
                 changeArray: function(value) {
-                    this.set('items', value);
-                    this.checkSelected();
+                    if (value.length > 0) {
+                        this.set('items', value);
+                        this.checkSelected();
+                    }
                 },
                 properties : {
                     items: {
