@@ -25,16 +25,8 @@ module.exports = function(grunt) {
                 banner: '<%= meta.banner %>'
             },
             dist: {
-                src: ['src/*.html'],
+                src: ['src/<%= pkg.name %>.html'],
                 dest: '<%= pkg.name %>.html'
-            }
-        },
-        vulcanize: {
-            default: {
-                options: {},
-                files: {
-                    '<%= pkg.name %>.html': '<%= pkg.name %>.html'
-                }
             }
         },
         changelog: {
@@ -102,6 +94,14 @@ module.exports = function(grunt) {
             options: {
                 configFile: 'test/karma.conf.js'
             }
+        },
+        copy: {
+          main: {
+            expand: true,
+            cwd: 'src/',
+            src: ['*'],
+            dest: ''
+          },
         }
     });
 
@@ -110,6 +110,7 @@ module.exports = function(grunt) {
 
     // Load the plugin that provides the "concat" task.
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
 
     // Load the plugin that provides the "watch" task.
@@ -137,7 +138,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test-server', ['karma:server']);
 
     // Build task.
-    grunt.registerTask('build', ['concat']);
+    grunt.registerTask('build', ['copy', 'concat']);
 
     // release task
     grunt.registerTask('release', ['build']);

@@ -5,6 +5,7 @@
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="sortableBehavior.html">
 
 <dom-module id="gig-select">
 
@@ -50,18 +51,18 @@
             color: var(--select-color-hover, white);
         }
 
-        .select .item i {
+        .select .item iron-icon {
             position:absolute;
             right: 10px;
             top: 50%;
-            width: 10px;
-            height: 10px;
+            width: 15px;
+            height: 15px;
             margin-top: -8px;
             display: block;
             color: var(--input-color-text, #76838f);
         }
 
-        .select .item:hover i {
+        .select .item:hover iron-icon {
             color: var(--select-color-hover, white);
         }
 
@@ -71,7 +72,6 @@
             color: var(--input-color-text, #76838f);
             pointer-events: none;
         }
-
 
         .select ul {
             max-height: 200px;
@@ -159,7 +159,18 @@
             font-size: 12px;
         }
 
+        .list-group.sortable .list-group-item {
+            cursor: move;
+        }
 
+        .list-group.sortable .sortable-chosen {
+            opacity: 0.7;
+        }
+
+        .list-group.sortable .sortable-ghost {
+            opacity: 0.1;
+            background: rgba(0,0,0, 0.3);
+        }
 
         .list-group-item {
             border-radius: 3px;
@@ -190,6 +201,11 @@
             top: -5px;
         }
 
+        .list-group-item .delete iron-icon {
+            width: 15px;
+            height: 15px;
+        }
+
         .search {
             padding: 5px;
         }
@@ -206,7 +222,6 @@
             width: 100%;
             line-height: 18px;
             outline: none;
-
         }
 
     </style>
@@ -217,10 +232,9 @@
 
         <div class="select">
             <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
-                <span>{{itemSelected.label}}</span>
-                <span hidden$="[[itemSelected]]">[[label]]</span>
-
-                <i class="fa fa-angle-down"></i>
+                <span hidden$="[[multipleClass]]">{{itemSelected.label}}</span>
+                <span hidden$="[[showLabel(itemSelected, multipleClass)]]">[[label]]</span>
+                <iron-icon icon="fa:angle-down"></iron-icon>
             </div>
             <ul class$="[[showSelect]]" style$="{{getHeight(height)}}">
                 <template is="dom-if" if="[[search]]">
@@ -266,14 +280,13 @@
             <div class="error small">[[errorMessage]]</div>
         </template>
 
-        <template is="dom-if" if="[[multipleClass]]">
-            <ul class="list-group">
+        <template is="dom-if" if="[[multipleClass]]" on-dom-change="initSortable">
+            <ul class$="list-group {{showSortable(sortable)}}" id="list">
                 <template is="dom-repeat" items="{{arrayItemsSelected}}">
-                    <li class="list-group-item">{{item.label}}<span class="delete" on-click="selectItem"><i class="fa fa-times"></i></span></li>
+                    <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}<span class="delete" on-click="selectItem"><iron-icon icon="fa:times"></iron-icon></span></li>
                 </template>
             </ul>
         </template>
-
 
     </template>
 
@@ -287,7 +300,8 @@
                 },
                 behaviors: [
                     Polymer.IronFormElementBehavior,
-                    Polymer.IronValidatableBehavior
+                    Polymer.IronValidatableBehavior,
+                    SortableBehavior
                 ],
                 changeEvent: function() {
 
@@ -308,6 +322,13 @@
                 _getValidity: function() {
                     return this.checkRequired();
                 },
+                showLabel: function(itemSelected, multipleClass) {
+                    if (itemSelected && !multipleClass) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
                 checkRequired: function() {
                     this.errorMessage = null;
                     this.invalid = false;
@@ -326,6 +347,15 @@
                         if (!item) return false;
                         return (item.label  && ~item.label.toLowerCase().indexOf(val.toLowerCase()));
                     };
+                },
+                checkIfExists: function(array, value) {
+                    for (var i = 0; i < array.length; i++) {
+                        if (array[i].value === value) {
+                            return i;
+                        }
+                    }
+
+                    return null;
                 },
                 checkSelected: function() {
 
@@ -360,9 +390,7 @@
                                 this.itemSelected = this.items[i];
                             }
                         }
-
                     }
-
 
                     if (this.multiple && this.arrayItemsSelected.length > 0) {
                         this._changeArrayValues();
@@ -370,11 +398,13 @@
                 },
                 selectItem: function(e) {
 
+                    var checkItem = this.checkIfExists(this.arrayItemsSelected, e.model.item.value);
+
                     if (this.multiple) {
-                        if (this.arrayItemsSelected.indexOf(e.model.item) < 0) {
+                        if (checkItem === null) {
                             this.push('arrayItemsSelected', e.model.item);
                         } else {
-                            this.splice('arrayItemsSelected', this.arrayItemsSelected.indexOf(e.model.item), 1);
+                            this.splice('arrayItemsSelected', checkItem, 1);
                         }
 
                         this._changeArrayValues();
@@ -393,7 +423,6 @@
                     return 'max-height:'+height+'px';
                 },
                 selectAllHandler : function() {
-
                     if (!this.checkSelectAll) {
                         this.arrayItemsSelected = this.items;
                     } else {
@@ -404,7 +433,6 @@
                 },
                 clickItem: function() {
                     this.showSelect = 'show';
-
                 },
                 hideSelect: function() {
                     this.showSelect = null;
@@ -427,18 +455,14 @@
                     return item.getAttribute('icon');
                 },
                 isElement: function(obj) {
-                  try {
-                    //Using W3 DOM2 (works for FF, Opera and Chrom)
-                    return obj instanceof HTMLElement;
-                  }
-                  catch(e){
-                    //Browsers not supporting W3 DOM2 don't have HTMLElement and
-                    //an exception is thrown and we end up here. Testing some
-                    //properties that all elements have. (works on IE7)
-                    return (typeof obj==="object") &&
-                      (obj.nodeType===1) && (typeof obj.style === "object") &&
-                      (typeof obj.ownerDocument ==="object");
-                  }
+                    try {
+                        return obj instanceof HTMLElement;
+                    }
+                    catch(e){
+                        return (typeof obj==="object") &&
+                        (obj.nodeType===1) && (typeof obj.style === "object") &&
+                        (typeof obj.ownerDocument ==="object");
+                    }
                 },
                 getClassItem: function(errorMessage, disabled) {
 
@@ -470,7 +494,7 @@
                             object.value += this.arrayItemsSelected[i].value+',';
                         }
 
-                        object.label = object.label.substring(0, object.label.length - 1);
+                        object.label = object.label;
                         object.value = object.value.substring(0, object.value.length - 1);
 
                         this.itemSelected = object;
@@ -478,14 +502,13 @@
 
                 },
                 _changeValue : function(value) {
-
                     if (this.itemSelected)
                     this.value = this.itemSelected.value;
 
                     if(value) {
                         this.errorMessage = null;
                     }
-                    this.fire('change');
+                    this.fire('change', {value: this.value});
                 },
                 changeArray: function(value) {
                     this.set('items', value);
@@ -540,6 +563,10 @@
                         value: false
                     },
                     search: {
+                        type: Boolean,
+                        value: false
+                    },
+                    sortable: {
                         type: Boolean,
                         value: false
                     }

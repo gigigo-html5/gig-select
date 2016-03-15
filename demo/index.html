@@ -8,7 +8,6 @@
     <title>Gig Component fieldMap Demo</title>
     <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="/demo/gig-select.html">
-    <link rel="import" href="../bower_components/gig-form/gig-form.html">
 
     <style is="custom-style">
         body {
@@ -50,19 +49,65 @@
 </head>
 <body>
 
+    <div class="field">
+        <label>Select with label</label>
+        <gig-select label="Select a city">
+            <option value="malaga">Málaga</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+        </gig-select>
+    </div>
 
     <div class="field">
-        <label>Select wit value select</label>
+        <label>Select with one value</label>
+        <gig-select label="Select a city">
+            <option value="malaga" selected>Málaga</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+        </gig-select>
+    </div>
+
+    <div class="field">
+        <label>Select with value select</label>
         <gig-select label="Select a city" multiple>
             <option value="malaga" selected>Málaga</option>
             <option value="madrid">Madrid</option>
             <option value="barcelona">Barcelona</option>
             <option value="valencia">Valencia</option>
         </gig-select>
-
     </div>
 
+    <div class="field">
+        <label>Select multiple with class multiple</label>
+        <gig-select label="Select a city" multiple multiple-class>
+            <option value="malaga">Málaga</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+        </gig-select>
+    </div>
 
+    <div class="field">
+        <label>Select multiple with class multiple and sortable</label>
+        <gig-select label="Select a city" multiple multiple-class sortable>
+            <option value="malaga">Málaga</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+        </gig-select>
+    </div>
+
+    <div class="field">
+        <label>Select multiple with values selected and class multiple and sortable</label>
+        <gig-select label="Select a city" value="barcelona,madrid,malaga" multiple multiple-class sortable>
+            <option value="malaga">Málaga</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+        </gig-select>
+    </div>
 
 </body>
 
