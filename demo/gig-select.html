@@ -269,12 +269,25 @@
 
         <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
 
-        <input type="hidden"
-               id="input"
-               required$="[[required]]"
-               disabled$="[[disabled]]"
-               name$="[[name]]"
-               value="{{itemSelected.value}}">
+        <template is="dom-if" if="{{!valueArray}}">
+            <input type="hidden"
+                   id="input"
+                   required$="[[required]]"
+                   disabled$="[[disabled]]"
+                   name$="[[name]]"
+                   value="{{itemSelected.value}}">
+        </template>
+
+        <template is="dom-if" if="{{valueArray}}">
+            <template is="dom-repeat" items="{{arrayItemsSelected}}">
+                <input type="hidden"
+                       id="input"
+                       required$="[[required]]"
+                       disabled$="[[disabled]]"
+                       name$="[[name]][]"
+                       value="{{item.value}}">
+           </template>
+        </template>
 
         <template is="dom-if" if="[[errorMessage]]">
             <div class="error small">[[errorMessage]]</div>
@@ -567,6 +580,10 @@
                         value: false
                     },
                     sortable: {
+                        type: Boolean,
+                        value: false
+                    },
+                    valueArray: {
                         type: Boolean,
                         value: false
                     }
