@@ -1,6 +1,6 @@
 {
   "name": "gig-select",
-  "version": "0.0.1",
+  "version": "0.0.12",
   "homepage": "https://github.com/gigigo-html5/gig-select",
   "authors": [
     "Pedro Peña <pedro.jose@gigigo.com>"
@@ -14,6 +14,15 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "~1.0.9"
+    "polymer": "^1.6.0",
+    "iron-form-element-behavior": "^1.0.6",
+    "iron-overlay-behavior": "^1.8.5",
+    "iron-validatable-behavior": "^1.1.1",
+    "gig-html": "^0.0.1",
+    "gig-icon": "^0.1.1",
+    "Sortable": "^1.4.2"
+  },
+  "resolutions": {
+    "polymer": "1.6.0"
   }
 }
