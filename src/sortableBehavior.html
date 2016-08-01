@@ -1,54 +1,59 @@
-<script src="../Sortable/Sortable.js"></script>
+<script src="../bower_components/Sortable/Sortable.js"></script>
 
 <script>
-    SortableBehavior = {
-        initSortable: function() {
-            var self = this;
-            if (!this.sortable) return false;
+  /**
+   * description
+   * @polymerBehavior SortableBehavior
+   *
+   * @type {{initSortable: SortableBehavior.initSortable, showSortable: SortableBehavior.showSortable, sortableEndListener: SortableBehavior.sortableEndListener, updateValues: SortableBehavior.updateValues, properties: {listSortable: {type: String}}}}
+   */
+  SortableBehavior = {
+    initSortable: function() {
+      var self = this;
+      if (!this.sortable) return false;
 
-            this.listSortable = Polymer.dom(this.root).querySelector('#list');
+      this.listSortable = Polymer.dom(this.root).querySelector('#list');
 
-            var sortable = new Sortable(self.listSortable, {
-                onUpdate: self.sortableEndListener.bind(this)
-            })
+      var sortable = new Sortable(self.listSortable, {
+        onUpdate: self.sortableEndListener.bind(this)
+      })
+    },
+    showSortable: function(sortable) {
+      if (sortable) {
+        return 'sortable';
+      }
+    },
+    sortableEndListener: function(e) {
+      this.updateValues();
 
-        },
-        showSortable: function(sortable) {
-            if (sortable) {
-                return 'sortable';
-            }
-        },
-        sortableEndListener: function(e) {
-            this.updateValues();
+    },
+    updateValues: function() {
+      var self = this;
+      var array = [];
+      var childrenItems = Polymer.dom(this.listSortable).querySelectorAll('li');
 
-        },
-        updateValues: function() {
-            var self = this;
-            var array = [];
-            var childrenItems = Polymer.dom(this.listSortable).querySelectorAll('li');
+      for (var i = 0; i < childrenItems.length; i++) {
+        var item = childrenItems[i].cloneNode(true);
 
-            for (var i = 0; i < childrenItems.length; i++) {
-                var item = childrenItems[i].cloneNode(true);
-
-                if (item.getAttribute('data-model')) {
-                    array.push({
-                        value: item.getAttribute('data-model'),
-                        label: item.innerText
-                    })
-                }
-            }
-
-            self.arrayItemsSelected = [];
-            this.async(function () {
-                self.arrayItemsSelected = array;
-                self._changeArrayValues();
-            });
-
-        },
-        properties: {
-            listSortable: {
-                type: String
-            }
+        if (item.getAttribute('data-model')) {
+          array.push({
+            value: item.getAttribute('data-model'),
+            label: item.innerText
+          })
         }
-    };
+      }
+
+      self.arrayItemsSelected = [];
+      this.async(function() {
+        self.arrayItemsSelected = array;
+        self._changeArrayValues();
+      });
+
+    },
+    properties: {
+      listSortable: {
+        type: String
+      }
+    }
+  };
 </script>

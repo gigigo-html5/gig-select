@@ -2,11 +2,19 @@
   "name": "gig-select",
   "version": "0.0.12",
   "description": "Webcomponents to manage custom select",
-  "main": "gruntfile.js",
+  "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release": "./node_modules/.bin/grunt release",
-    "postinstall": "./node_modules/.bin/bower install"
+    "test": "npm run lint-polymer",
+    "release": "gulp release",
+    "postinstall": "bower install",
+    "check-bower-deps": "ncu -m bower",
+    "check-npm-deps": "ncu",
+    "update-deps": "ncu -u && ncu -m bower -u",
+    "serve": "ws -p 3001",
+    "lint-polymer": "polylint --root src gig-select.html gig-select-style.html sortableBehavior.html",
+    "release:patch": "gulp release && npm version patch --no-git-tag-version && git add -A && git commit -m \"chore(npm): update npm version\" && bower version patch -m \"chore(release): Bump to %s\" && git push --tags",
+    "release:minor": "gulp release && npm version minor --no-git-tag-version && git add -A && git commit -m \"chore(npm): update npm version\" && bower version minor -m \"chore(release): Bump to %s\" && git push --tags",
+    "release:major": "gulp release && npm version major --no-git-tag-version && git add -A && git commit -m \"chore(npm): update npm version\" && bower version major -m \"chore(release): Bump to %s\" && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -18,16 +26,15 @@
     "url": "https://github.com/gigigo-html5/gig-select/issues"
   },
   "devDependencies": {
-    "bower": "*",
-    "grunt": ">=0.4.0",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-concat": "*",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jshint": "*",
-    "grunt-conventional-changelog": "0.0.12",
-    "grunt-release": "~0.3.3",
-    "grunt-vulcanize": "^1.0.0",
-    "karma": "~0.8.0"
+    "bower": "^1.7.9",
+    "dateformat": "^1.0.12",
+    "gulp": "^3.9.1",
+    "gulp-header": "^1.8.7",
+    "gulp-replace": "^0.5.4",
+    "gulp-vulcanize": "^6.1.0",
+    "local-web-server": "^1.2.6",
+    "npm-check-updates": "^2.7.2",
+    "polylint": "^2.10.1"
   },
   "homepage": "https://github.com/gigigo-html5/gig-select",
   "dependencies": {}

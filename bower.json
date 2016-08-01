@@ -14,12 +14,15 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "~1.2.0",
-    "iron-form-element-behavior": "PolymerElements/iron-form-element-behavior#~1.0.4",
-    "iron-overlay-behavior": "PolymerElements/iron-overlay-behavior#~1.1.2",
-    "iron-validatable-behavior": "PolymerElements/iron-validatable-behavior#~1.0.4",
-    "gig-html": "~0.0.1",
-    "gig-icon": "~0.0.1",
+    "polymer": "^1.6.0",
+    "iron-form-element-behavior": "^1.0.6",
+    "iron-overlay-behavior": "^1.8.5",
+    "iron-validatable-behavior": "^1.1.1",
+    "gig-html": "^0.0.1",
+    "gig-icon": "^0.1.1",
     "Sortable": "^1.4.2"
+  },
+  "resolutions": {
+    "polymer": "1.6.0"
   }
 }

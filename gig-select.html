@@ -1,9 +1,10 @@
 <!--
  Webcomponents to manage custom select
- @version v0.0.12 - 2016-03-17
+ @version v0.0.12 - 2016-08-01
  @link https://github.com/gigigo-html5/gig-select
  @author Pedro José Peña Jerez <pedro.jose@gigigo.com>
  @license MIT License, http://www.opensource.org/licenses/MIT
+
  -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-overlay-behavior/iron-overlay-backdrop.html">
@@ -14,589 +15,391 @@
 <link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="sortableBehavior.html">
 
+<link rel="import" href="gig-select-style.html">
+
 <dom-module id="gig-select">
+  <template>
+    <style include="gig-select-style"></style>
 
-    <style>
-
-        * {
-            box-sizing: border-box;
-            font-family: Roboto, sans-serif;
-        }
-
-        ::content option {
-            display: none;
-        }
-
-        .select {
-            position:relative;
-        }
-
-        .select .item {
-            height: 36px;
-            padding: 6px 27px 6px 15px;
-            line-height: 1.57142857;
-            font-family: Roboto, sans-serif;
-            font-weight: 300;
-            font-size: 14px;
-            color: var(--input-color-text, #76838f);
-            background-color: var(--select-background-color, white);
-            border: 1px solid var(--input-border-color, #e4eaec);
-            border-radius: 3px;
-            outline: 0;
-            cursor: pointer;
-            position:relative;
-            width: 100%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .select .item:hover {
-            transition: border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
-            -webkit-transition:  border .2s linear,color .2s linear,width .2s linear,background-color .2s linear;
-            background-color: var(--select-background-color-hover, #62a8ea);
-            color: var(--select-color-hover, white);
-        }
-
-        .select .item iron-icon {
-            position:absolute;
-            right: 10px;
-            top: 50%;
-            width: 15px;
-            height: 15px;
-            margin-top: -8px;
-            display: block;
-            color: var(--input-color-text, #76838f);
-        }
-
-        .select .item:hover iron-icon {
-            color: var(--select-color-hover, white);
-        }
-
-        .select .item.disabled, .select .item.disabled:hover {
-            background-color: var(--select-background-color-disabled, #f3f7f9);
-            cursor: not-allowed;
-            color: var(--input-color-text, #76838f);
-            pointer-events: none;
-        }
-
-        .select ul {
-            max-height: 200px;
-            overflow: auto;
-            margin: 0;
-            padding: 0;
-            display: none;
-            box-shadow: 0 -3px 12px rgba(0,0,0,.05);
-            position:absolute;
-            min-width: 100%;
-            top: 100%;
-            left: 0;
-            margin-top: 5px;
-            z-index: 2;
-            background: var(--select-background-color, white);
-            background-clip: padding-box;
-            float: left;
-            border: 1px solid var(--input-border-color, #e4eaec);
-            transition: .25s
-        }
-
-        .select ul.show {
-            display: inline-block;
-        }
-
-        .select li {
-            list-style: none;
-            margin: 0;
-            padding: 6px 15px;
-            color: var(--input-color-text, #76838f);
-            cursor: pointer;
-            font-size: 14px;
-            position:relative;
-            font-weight: 300;
-        }
-
-        .select li:hover {
-            background-color: var(--select-item-background-color-hover, #f3f7f9);
-        }
-
-        .select li iron-icon {
-            position:absolute;
-            right: 15px;
-            top: 50%;
-            width: 10px;
-            height: 10px;
-            margin-top: -8px;
-            color: var(--input-color-text, #76838f);
-            display: none;
-        }
-
-        .select li.active iron-icon {
-            display: block;
-        }
-
-        .select .item.error {
-            border-color: var(--input-color-error, #f96868);
-        }
-
-        .error {
-            color: var(--input-color-error, #f96868);
-        }
-
-        div.error {
-            padding: 5px 0;
-        }
-
-        .small {
-            font-size: 85%;
-        }
-
-        .html {
-            width: 100%;
-            display: block;
-            text-align: center;
-        }
-
-        .list-group {
-            border-radius: 3px;
-            background-color: #f3f7f9;
-            margin-bottom: 10px;
-            list-style: none;
-            padding: 0;
-            font-weight: 300px;
-            font-size: 12px;
-        }
-
-        .list-group.sortable .list-group-item {
-            cursor: move;
-        }
-
-        .list-group.sortable .sortable-chosen {
-            opacity: 0.7;
-        }
-
-        .list-group.sortable .sortable-ghost {
-            opacity: 0.1;
-            background: rgba(0,0,0, 0.3);
-        }
-
-        .list-group-item {
-            border-radius: 3px;
-            border-bottom: 1px solid rgba(0,0,0,.075);
-            color: #76838f;
-            position:relative;
-            padding: 10px 15px;
-            margin: 0;
-            margin-bottom: -1px;
-        }
-        .list-group-item:first-child {
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
-        }
-
-        .list-group-item:nth-last-child(2) {
-            margin-bottom: 0;
-            border-bottom-right-radius: 3px;
-            border-bottom-left-radius: 3px;
-            border-bottom: 0;
-        }
-
-        .list-group-item .delete {
-            float: right;
-            cursor: pointer;
-            padding: 5px;
-            position:relative;
-            top: -5px;
-        }
-
-        .list-group-item .delete iron-icon {
-            width: 15px;
-            height: 15px;
-        }
-
-        .search {
-            padding: 5px;
-        }
-
-        .search input {
-            border: 1px solid #e4eaec;
-            border-radius: 3px;
-            background-color: white;
-            color: #76838f;
-            font-size: 14px;
-            font-family: Roboto,sans-serif;
-            padding: 4px;
-            -webkit-appearance: none;
-            width: 100%;
-            line-height: 18px;
-            outline: none;
-        }
-
-    </style>
-
-    <template>
-
-        <content select="option" id="c" hidden$="{{contentHidden}}"></content>
-
-        <div class="select">
-            <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
-                <span hidden$="[[multipleClass]]">{{itemSelected.label}}</span>
-                <span hidden$="[[showLabel(itemSelected, multipleClass)]]">[[label]]</span>
-                <iron-icon icon="fa:angle-down"></iron-icon>
-            </div>
-            <ul class$="[[showSelect]]" style$="{{getHeight(height)}}">
-                <template is="dom-if" if="[[search]]">
-                    <div class="search">
-                        <input type="search" value="{{filterVal::input}}">
-                    </div>
-                </template>
-                <template is="dom-repeat" items="{{items}}" filter="{{_filter(filterVal)}}">
-                    <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
-                        <template is="dom-if" if="{{html}}">
-                            <div class="html"><gig-html html="{{item.innerHTML}}"></gig-html>
-                        </template>
-                        <template is="dom-if" if="{{!html}}">
-                            <span class$="[[getClassIcon(item)]]"></span>
-                            <span>{{item.label}}</span>
-                            <iron-icon icon="fa:check"></iron-icon>
-                        </template>
-                    </li>
-                </template>
-                <template is="dom-if" if="[[selectAll]]">
-                    <li on-click="selectAllHandler">
-                        <template is="dom-if" if="[[!checkSelectAll]]">
-                            <span>[[selectAll]]</span>
-                        </template>
-                        <template is="dom-if" if="[[checkSelectAll]]">
-                            <span>[[unselectAll]]</span>
-                        </template>
-                    </li>
-                </template>
-            </ul>
-        </div>
-
-        <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
-
-        <template is="dom-if" if="{{!valueArray}}">
-            <input type="hidden"
-                   id="input"
-                   required$="[[required]]"
-                   disabled$="[[disabled]]"
-                   name$="[[name]]"
-                   value="{{itemSelected.value}}">
+    <content select="option" id="c" hidden$="{{contentHidden}}"></content>
+    <div class="select">
+      <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
+        <span hidden$="[[multipleClass]]">{{itemSelected.label}}</span>
+        <span hidden$="[[showLabel(itemSelected, multipleClass)]]">[[label]]</span>
+        <iron-icon icon="fa:angle-down"></iron-icon>
+      </div>
+      <ul class$="[[showSelect]]" style$="{{getHeight(height)}}" hidden$="{{!showSelect}}">
+        <template is="dom-if" if="[[search]]">
+          <div class="search">
+            <input type="search" value="{{filterVal::input}}">
+          </div>
         </template>
-
-        <template is="dom-if" if="{{valueArray}}">
-            <template is="dom-repeat" items="{{arrayItemsSelected}}">
-                <input type="hidden"
-                       id="input"
-                       required$="[[required]]"
-                       disabled$="[[disabled]]"
-                       name$="[[name]][]"
-                       value="{{item.value}}">
-           </template>
+        <template is="dom-repeat" items="{{items}}" filter="{{_filter(filterVal)}}">
+          <li on-click="selectItem" class$="[[itemClass(item, itemSelected)]]">
+            <template is="dom-if" if="{{html}}">
+              <div class="html">
+                <gig-html html="{{item.innerHTML}}"></gig-html>
+              </div>
+            </template>
+            <template is="dom-if" if="{{!html}}">
+              <span class$="[[getClassIcon(item)]]"></span>
+              <span>{{item.label}}</span>
+              <iron-icon icon="fa:check"></iron-icon>
+            </template>
+          </li>
         </template>
-
-        <template is="dom-if" if="[[errorMessage]]">
-            <div class="error small">[[errorMessage]]</div>
+        <template is="dom-if" if="[[selectAll]]">
+          <li on-click="selectAllHandler">
+            <template is="dom-if" if="[[!checkSelectAll]]">
+              <span>[[selectAll]]</span>
+            </template>
+            <template is="dom-if" if="[[checkSelectAll]]">
+              <span>[[unselectAll]]</span>
+            </template>
+          </li>
         </template>
+      </ul>
+    </div>
 
-        <template is="dom-if" if="[[multipleClass]]" on-dom-change="initSortable">
-            <ul class$="list-group {{showSortable(sortable)}}" id="list">
-                <template is="dom-repeat" items="{{arrayItemsSelected}}">
-                    <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}<span class="delete" on-click="selectItem"><iron-icon icon="fa:times"></iron-icon></span></li>
-                </template>
-            </ul>
-        </template>
+    <iron-overlay-backdrop hidden$="{{!showSelect}}" id="overlay" on-click="hideSelect"></iron-overlay-backdrop>
 
+    <template is="dom-if" if="{{!valueArray}}">
+      <input type="hidden"
+             id="input"
+             required$="[[required]]"
+             disabled$="[[disabled]]"
+             name$="[[name]]"
+             value="{{itemSelected.value}}">
     </template>
 
-    <script>
-        (function() {
+    <template is="dom-if" if="{{valueArray}}">
+      <template is="dom-repeat" items="{{arrayItemsSelected}}">
+        <input type="hidden"
+               id="input"
+               required$="[[required]]"
+               disabled$="[[disabled]]"
+               name$="[[name]][]"
+               value="{{item.value}}">
+      </template>
+    </template>
 
-            Polymer({
-                is: 'gig-select',
-                listeners: {
-                    'change' : 'changeEvent'
-                },
-                behaviors: [
-                    Polymer.IronFormElementBehavior,
-                    Polymer.IronValidatableBehavior,
-                    SortableBehavior
-                ],
-                changeEvent: function() {
+    <template is="dom-if" if="[[errorMessage]]">
+      <div class="error small">[[errorMessage]]</div>
+    </template>
 
-                },
-                ready: function() {
-                    this.items = this.getInitialContent();
-                    this.contentHidden = true;
-                    this.showSelect = null;
-                },
-                getInitialContent: function() {
-                    if (Polymer.dom(this.$.c).getDistributedNodes().length > 0) {
-                        return Polymer.dom(this.$.c).getDistributedNodes()
-                    } else {
-                        return [];
-                    }
-                },
-                _getValidity: function() {
-                    return this.checkRequired();
-                },
-                showLabel: function(itemSelected, multipleClass) {
-                    if (itemSelected && !multipleClass) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                },
-                checkRequired: function() {
-                    this.errorMessage = null;
-                    this.invalid = false;
+    <template is="dom-if" if="[[multipleClass]]" on-dom-change="initSortable">
+      <ul class$="list-group {{showSortable(sortable)}}" id="list">
+        <template is="dom-repeat" items="{{arrayItemsSelected}}">
+          <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}
+            <span class="delete" on-click="selectItem">
+              <iron-icon icon="fa:times"></iron-icon>
+            </span>
+          </li>
+        </template>
+      </ul>
+    </template>
 
-                    if (this.required && !this.value) {
-                        this.errorMessage = 'Field required';
-                        this.invalid = true;
-                        return false;
-                    } else {
-                        return true;
-                    }
-                },
-                _filter: function(val) {
-                    return function(item) {
-                        if (!val) return true;
-                        if (!item) return false;
-                        return (item.label  && ~item.label.toLowerCase().indexOf(val.toLowerCase()));
-                    };
-                },
-                checkIfExists: function(array, value) {
-                    for (var i = 0; i < array.length; i++) {
-                        if (array[i].value === value) {
-                            return i;
-                        }
-                    }
+  </template>
 
-                    return null;
-                },
-                checkSelected: function() {
+  <script>
+    (function() {
 
-                    this.values = [];
-                    if (this.multiple && this.value) {
-                        this.values = this.value.split(',')
-                    }
+      Polymer({
+        is: 'gig-select',
+        listeners: {
+          'change': 'changeEvent'
+        },
+        behaviors: [
+          Polymer.IronFormElementBehavior,
+          Polymer.IronValidatableBehavior,
+          SortableBehavior
+        ],
+        properties: {
+          items: {
+            type: Array,
+            value: function() {
+              return []
+            },
+            notify: true,
+            observer: 'changeArray'
+          },
+          itemSelected: {
+            type: Object,
+            notify: true,
+            observer: '_changeValue'
+          },
+          arrayItemsSelected: {
+            type: Array,
+            value: function() {
+              return []
+            }
+          },
+          value: {
+            type: String,
+            reflectToAttribute: true,
+            notify: true
+          },
+          multiple: {
+            type: Boolean
+          },
+          errorMessage: {
+            type: String,
+            value: ''
+          },
+          disabled: {
+            type: Boolean,
+            value: false
+          },
+          checkSelectAll: {
+            type: Boolean,
+            value: false
+          },
+          html: {
+            type: Boolean,
+            value: false
+          },
+          multipleClass: {
+            type: Boolean,
+            value: false
+          },
+          search: {
+            type: Boolean,
+            value: false
+          },
+          sortable: {
+            type: Boolean,
+            value: false
+          },
+          valueArray: {
+            type: Boolean,
+            value: false
+          },
+          selectAll: {
+            type: Boolean
+          },
+          label: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          filterVal: {
+            type: String
+          }
+        },
+        keyBindings: {
+          'up down': 'open',
+          'esc': 'close'
+        },
+        changeEvent: function() {
 
-                    for (var i = 0; i < this.items.length; i++) {
-                        if (this.items[i].selected) {
-                            if (this.multiple) {
-                                if (this.arrayItemsSelected.indexOf(this.items[i]) < 0) {
-                                    this.arrayItemsSelected.push(this.items[i]);
-                                }
-                            } else {
-                                this.itemSelected = this.items[i];
-                            }
-                        }
-                        if (!this.multiple) {
-                            if (this.value === this.items[i].value) {
-                                this.itemSelected = this.items[i];
-                            }
-                        }
-                    }
+        },
+        showSelect: function() {
+            console.log('show Select');
+        },
+        ready: function() {
+          this.items = this.getInitialContent();
+          this.contentHidden = true;
+          this.showSelect = null;
+        },
+        getInitialContent: function() {
+          if (Polymer.dom(this.$.c).getDistributedNodes().length > 0) {
+            return Polymer.dom(this.$.c).getDistributedNodes()
+          } else {
+            return [];
+          }
+        },
+        _getValidity: function() {
+          return this.checkRequired();
+        },
+        showLabel: function(itemSelected, multipleClass) {
+          return (itemSelected && !multipleClass)
+        },
+        checkRequired: function() {
+          this.errorMessage = null;
+          this.invalid = false;
 
-                    if (this.values.length && this.multiple) {
-                        for (var i = 0; i < this.values.length; i++) {
-                            var index = this.checkIfExists(this.items, this.values[i]);
+          if (this.required && !this.value) {
+            this.errorMessage = 'Field required';
+            this.invalid = true;
+            return false;
+          } else {
+            return true;
+          }
+        },
+        _filter: function(val) {
+          return function(item) {
+            if (!val) return true;
+            if (!item) return false;
+            return (item.label && ~item.label.toLowerCase().indexOf(val.toLowerCase()));
+          };
+        },
+        checkIfExists: function(array, value) {
+          for (var i = 0; i < array.length; i++) {
+            if (array[i].value === value) {
+              return i;
+            }
+          }
 
-                            if (index != null) {
-                                this.push('arrayItemsSelected', this.items[index]);
-                            }
-                        }
-                    }
+          return null;
+        },
+        checkSelected: function() {
 
-                    if (this.multiple && this.arrayItemsSelected.length > 0) {
-                        this._changeArrayValues();
-                    }
-                },
-                selectItem: function(e) {
+          this.values = [];
+          if (this.multiple && this.value) {
+            this.values = this.value.split(',')
+          }
 
-                    var checkItem = this.checkIfExists(this.arrayItemsSelected, e.model.item.value);
-
-                    if (this.multiple) {
-                        if (checkItem === null) {
-                            this.push('arrayItemsSelected', e.model.item);
-                        } else {
-                            this.splice('arrayItemsSelected', checkItem, 1);
-                        }
-
-                        this._changeArrayValues();
-
-                    } else {
-                        this.itemSelected = e.model.item;
-                        this.showSelect = null;
-                    }
-
-                    if (this.multipleClass) {
-                        this.hideSelect();
-                    }
-
-                },
-                getHeight: function(height) {
-                    return 'max-height:'+height+'px';
-                },
-                selectAllHandler : function() {
-                    if (!this.checkSelectAll) {
-                        this.arrayItemsSelected = this.items;
-                    } else {
-                        this.arrayItemsSelected = [];
-                    }
-                    this.checkSelectAll = !this.checkSelectAll;
-                    this._changeArrayValues();
-                },
-                clickItem: function() {
-                    this.showSelect = 'show';
-                },
-                hideSelect: function() {
-                    this.showSelect = null;
-                },
-                itemClass: function(item, selectedItem) {
-                    var className = '';
-
-                    if (this.multiple && this.arrayItemsSelected) {
-                        if (this.arrayItemsSelected.indexOf(item) >= 0) {
-                            className = 'active';
-                        }
-                    }
-
-                    return className;
-                },
-                getClassIcon: function(item) {
-                    if (!this.isElement(item)) {
-                        return null;
-                    }
-                    return item.getAttribute('icon');
-                },
-                isElement: function(obj) {
-                    try {
-                        return obj instanceof HTMLElement;
-                    }
-                    catch(e){
-                        return (typeof obj==="object") &&
-                        (obj.nodeType===1) && (typeof obj.style === "object") &&
-                        (typeof obj.ownerDocument ==="object");
-                    }
-                },
-                getClassItem: function(errorMessage, disabled) {
-
-                    var classList = 'item';
-
-                    if (errorMessage) {
-                        classList += ' error';
-                    }
-
-                    if (disabled) {
-                        classList += ' disabled';
-                    }
-
-                    return classList;
-
-                },
-                _changeArrayValues: function() {
-
-                    var object = {};
-
-                    object.label = '';
-                    object.value = '';
-
-                    if (!this.arrayItemsSelected.length) {
-                        this.itemSelected = null;
-                    } else {
-                        for (var i = 0; i < this.arrayItemsSelected.length; i++) {
-                            object.label += this.arrayItemsSelected[i].label+',';
-                            object.value += this.arrayItemsSelected[i].value+',';
-                        }
-
-                        object.label = object.label;
-                        object.value = object.value.substring(0, object.value.length - 1);
-
-                        this.itemSelected = object;
-                    }
-
-                },
-                _changeValue : function(value) {
-                    if (this.itemSelected)
-                    this.value = this.itemSelected.value;
-
-                    if(value) {
-                        this.errorMessage = null;
-                    }
-                    this.fire('change', {value: this.value});
-                },
-                changeArray: function(value) {
-                    if (value.length > 0) {
-                        this.set('items', value);
-                        this.checkSelected();
-                    }
-                },
-                properties : {
-                    items: {
-                        type: Array,
-                        value: function () {
-                            return []
-                        },
-                        notify: true,
-                        observer: 'changeArray'
-                    },
-                    itemSelected: {
-                        type: Object,
-                        notify: true,
-                        observer: '_changeValue',
-                    },
-                    arrayItemsSelected: {
-                        type: Array,
-                        value: function () {
-                            return []
-                        }
-                    },
-                    value: {
-                        type: String,
-                        reflectToAttribute: true,
-                        notify: true
-                    },
-                    multiple: {
-                        type: Boolean
-                    },
-                    errorMessage: {
-                        type: String,
-                        value: ''
-                    },
-                    disabled: {
-                        type: Boolean,
-                        value: false
-                    },
-                    checkSelectAll: {
-                        type: Boolean,
-                        value: false
-                    },
-                    html: {
-                        type: Boolean,
-                        value: false
-                    },
-                    multipleClass: {
-                        type: Boolean,
-                        value: false
-                    },
-                    search: {
-                        type: Boolean,
-                        value: false
-                    },
-                    sortable: {
-                        type: Boolean,
-                        value: false
-                    },
-                    valueArray: {
-                        type: Boolean,
-                        value: false
-                    }
+          for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].selected) {
+              if (this.multiple) {
+                if (this.arrayItemsSelected.indexOf(this.items[i]) < 0) {
+                  this.arrayItemsSelected.push(this.items[i]);
                 }
-            })
-        })();
-    </script>
+              } else {
+                this.itemSelected = this.items[i];
+              }
+            }
+            if (!this.multiple) {
+              if (this.value === this.items[i].value) {
+                this.itemSelected = this.items[i];
+              }
+            }
+          }
+
+          if (this.values.length && this.multiple) {
+            for (var i = 0; i < this.values.length; i++) {
+              var index = this.checkIfExists(this.items, this.values[i]);
+
+              if (index != null) {
+                this.push('arrayItemsSelected', this.items[index]);
+              }
+            }
+          }
+
+          if (this.multiple && this.arrayItemsSelected.length > 0) {
+            this._changeArrayValues();
+          }
+        },
+        selectItem: function(e) {
+
+          var checkItem = this.checkIfExists(this.arrayItemsSelected, e.model.item.value);
+
+          if (this.multiple) {
+            if (checkItem === null) {
+              this.push('arrayItemsSelected', e.model.item);
+            } else {
+              this.splice('arrayItemsSelected', checkItem, 1);
+            }
+
+            this._changeArrayValues();
+
+          } else {
+            this.itemSelected = e.model.item;
+            this.showSelect = null;
+          }
+
+          if (this.multipleClass) {
+            this.hideSelect();
+          }
+
+        },
+        getHeight: function(height) {
+          return 'max-height:' + height + 'px';
+        },
+        selectAllHandler: function() {
+          if (!this.checkSelectAll) {
+            this.arrayItemsSelected = this.items;
+          } else {
+            this.arrayItemsSelected = [];
+          }
+          this.checkSelectAll = !this.checkSelectAll;
+          this._changeArrayValues();
+        },
+        clickItem: function() {
+          this.showSelect = this.showSelect ? null : 'show';
+        },
+        hideSelect: function() {
+          this.showSelect = null;
+        },
+        itemClass: function(item, selectedItem) {
+          var className = '';
+
+          if (this.multiple && this.arrayItemsSelected) {
+            if (this.arrayItemsSelected.indexOf(item) >= 0) {
+              className = 'active';
+            }
+          }
+
+          return className;
+        },
+        getClassIcon: function(item) {
+          if (!this.isElement(item)) {
+            return null;
+          }
+          return item.getAttribute('icon');
+        },
+        isElement: function(obj) {
+          try {
+            return obj instanceof HTMLElement;
+          }
+          catch (e) {
+            return (typeof obj === "object") &&
+              (obj.nodeType === 1) && (typeof obj.style === "object") &&
+              (typeof obj.ownerDocument === "object");
+          }
+        },
+        getClassItem: function(errorMessage, disabled) {
+
+          var classList = 'item';
+
+          if (errorMessage) {
+            classList += ' error';
+          }
+
+          if (disabled) {
+            classList += ' disabled';
+          }
+
+          return classList;
+
+        },
+        _changeArrayValues: function() {
+
+          var object = {};
+
+          object.label = '';
+          object.value = '';
+
+          if (!this.arrayItemsSelected.length) {
+            this.itemSelected = null;
+          } else {
+            for (var i = 0; i < this.arrayItemsSelected.length; i++) {
+              object.label += this.arrayItemsSelected[i].label + ',';
+              object.value += this.arrayItemsSelected[i].value + ',';
+            }
+            object.value = object.value.substring(0, object.value.length - 1);
+
+            this.itemSelected = object;
+          }
+
+        },
+        _changeValue: function(value) {
+          if (this.itemSelected)
+            this.value = this.itemSelected.value;
+
+          if (value) {
+            this.errorMessage = null;
+          }
+          this.fire('change', {value: this.value});
+        },
+        changeArray: function(value) {
+          if (value.length > 0) {
+            this.set('items', value);
+            this.checkSelected();
+          }
+        }
+      })
+    })();
+  </script>
 
 </dom-module>
