@@ -5,7 +5,7 @@ node_js:
 before_script:
   - npm install -g bower polylint web-component-tester
 addons:
-  firefox: '46.0',
+  firefox: '46.0'
   apt:
     sources:
       sources:
