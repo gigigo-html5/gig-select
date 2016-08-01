@@ -82,9 +82,11 @@
     <template is="dom-if" if="[[multipleClass]]" on-dom-change="initSortable">
       <ul class$="list-group {{showSortable(sortable)}}" id="list">
         <template is="dom-repeat" items="{{arrayItemsSelected}}">
-          <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}<span class="delete"
-                                                                                       on-click="selectItem"><iron-icon
-            icon="fa:times"></iron-icon></span></li>
+          <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}
+            <span class="delete" on-click="selectItem">
+              <iron-icon icon="fa:times"></iron-icon>
+            </span>
+          </li>
         </template>
       </ul>
     </template>
