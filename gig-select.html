@@ -1,6 +1,6 @@
 <!--
  Webcomponents to manage custom select
- @version v0.0.12 - 2016-07-22
+ @version v0.0.12 - 2016-08-01
  @link https://github.com/gigigo-html5/gig-select
  @author Pedro José Peña Jerez <pedro.jose@gigigo.com>
  @license MIT License, http://www.opensource.org/licenses/MIT
@@ -28,7 +28,7 @@
         <span hidden$="[[showLabel(itemSelected, multipleClass)]]">[[label]]</span>
         <iron-icon icon="fa:angle-down"></iron-icon>
       </div>
-      <ul class$="[[showSelect]]" style$="{{getHeight(height)}}">
+      <ul class$="[[showSelect]]" style$="{{getHeight(height)}}" hidden$="{{!showSelect}}">
         <template is="dom-if" if="[[search]]">
           <div class="search">
             <input type="search" value="{{filterVal::input}}">
@@ -90,9 +90,11 @@
     <template is="dom-if" if="[[multipleClass]]" on-dom-change="initSortable">
       <ul class$="list-group {{showSortable(sortable)}}" id="list">
         <template is="dom-repeat" items="{{arrayItemsSelected}}">
-          <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}<span class="delete"
-                                                                                       on-click="selectItem"><iron-icon
-            icon="fa:times"></iron-icon></span></li>
+          <li class="list-group-item" data-model$="{{item.value}}">{{item.label}}
+            <span class="delete" on-click="selectItem">
+              <iron-icon icon="fa:times"></iron-icon>
+            </span>
+          </li>
         </template>
       </ul>
     </template>
@@ -112,8 +114,87 @@
           Polymer.IronValidatableBehavior,
           SortableBehavior
         ],
+        properties: {
+          items: {
+            type: Array,
+            value: function() {
+              return []
+            },
+            notify: true,
+            observer: 'changeArray'
+          },
+          itemSelected: {
+            type: Object,
+            notify: true,
+            observer: '_changeValue'
+          },
+          arrayItemsSelected: {
+            type: Array,
+            value: function() {
+              return []
+            }
+          },
+          value: {
+            type: String,
+            reflectToAttribute: true,
+            notify: true
+          },
+          multiple: {
+            type: Boolean
+          },
+          errorMessage: {
+            type: String,
+            value: ''
+          },
+          disabled: {
+            type: Boolean,
+            value: false
+          },
+          checkSelectAll: {
+            type: Boolean,
+            value: false
+          },
+          html: {
+            type: Boolean,
+            value: false
+          },
+          multipleClass: {
+            type: Boolean,
+            value: false
+          },
+          search: {
+            type: Boolean,
+            value: false
+          },
+          sortable: {
+            type: Boolean,
+            value: false
+          },
+          valueArray: {
+            type: Boolean,
+            value: false
+          },
+          selectAll: {
+            type: Boolean
+          },
+          label: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          filterVal: {
+            type: String
+          }
+        },
+        keyBindings: {
+          'up down': 'open',
+          'esc': 'close'
+        },
         changeEvent: function() {
 
+        },
+        showSelect: function() {
+            console.log('show Select');
         },
         ready: function() {
           this.items = this.getInitialContent();
@@ -235,7 +316,7 @@
           this._changeArrayValues();
         },
         clickItem: function() {
-          this.showSelect = 'show';
+          this.showSelect = this.showSelect ? null : 'show';
         },
         hideSelect: function() {
           this.showSelect = null;
@@ -296,8 +377,6 @@
               object.label += this.arrayItemsSelected[i].label + ',';
               object.value += this.arrayItemsSelected[i].value + ',';
             }
-
-            object.label = object.label;
             object.value = object.value.substring(0, object.value.length - 1);
 
             this.itemSelected = object;
@@ -317,78 +396,6 @@
           if (value.length > 0) {
             this.set('items', value);
             this.checkSelected();
-          }
-        },
-        properties: {
-          items: {
-            type: Array,
-            value: function() {
-              return []
-            },
-            notify: true,
-            observer: 'changeArray'
-          },
-          itemSelected: {
-            type: Object,
-            notify: true,
-            observer: '_changeValue'
-          },
-          arrayItemsSelected: {
-            type: Array,
-            value: function() {
-              return []
-            }
-          },
-          value: {
-            type: String,
-            reflectToAttribute: true,
-            notify: true
-          },
-          multiple: {
-            type: Boolean
-          },
-          errorMessage: {
-            type: String,
-            value: ''
-          },
-          disabled: {
-            type: Boolean,
-            value: false
-          },
-          checkSelectAll: {
-            type: Boolean,
-            value: false
-          },
-          html: {
-            type: Boolean,
-            value: false
-          },
-          multipleClass: {
-            type: Boolean,
-            value: false
-          },
-          search: {
-            type: Boolean,
-            value: false
-          },
-          sortable: {
-            type: Boolean,
-            value: false
-          },
-          valueArray: {
-            type: Boolean,
-            value: false
-          },
-          selectAll: {
-            type: Boolean
-          },
-          label: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          filterVal: {
-            type: String
           }
         }
       })

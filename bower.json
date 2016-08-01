@@ -23,6 +23,6 @@
     "Sortable": "^1.4.2"
   },
   "resolutions": {
-    "polymer": "^1.6.0"
+    "polymer": "1.6.0"
   }
 }
