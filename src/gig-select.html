@@ -5,6 +5,7 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
 <link rel="import" href="sortableBehavior.html">
 
 <link rel="import" href="gig-select-style.html">
@@ -14,13 +15,14 @@
     <style include="gig-select-style"></style>
 
     <content select="option" id="c" hidden$="{{contentHidden}}"></content>
+
     <div class="select">
       <div on-click="clickItem" class$="[[getClassItem(errorMessage, disabled)]]">
         <span hidden$="[[multipleClass]]">{{itemSelected.label}}</span>
         <span hidden$="[[showLabel(itemSelected, multipleClass)]]">[[label]]</span>
         <iron-icon icon="fa:angle-down"></iron-icon>
       </div>
-      <ul class$="[[showSelect]]" style$="{{getHeight(height)}}" hidden$="{{!showSelect}}">
+      <ul class$="[[showSelect]]" id="scrollregion" style$="{{getHeight(height)}}" hidden$="{{!showSelect}}">
         <template is="dom-if" if="[[search]]">
           <div class="search">
             <input type="search" value="{{filterVal::input}}">
@@ -104,6 +106,7 @@
         behaviors: [
           Polymer.IronFormElementBehavior,
           Polymer.IronValidatableBehavior,
+          Polymer.IronScrollTargetBehavior,
           SortableBehavior
         ],
         properties: {
@@ -186,7 +189,7 @@
 
         },
         showSelect: function() {
-            console.log('show Select');
+            //console.log('show Select');
         },
         ready: function() {
           this.items = this.getInitialContent();
@@ -366,7 +369,7 @@
             this.itemSelected = null;
           } else {
             for (var i = 0; i < this.arrayItemsSelected.length; i++) {
-              object.label += this.arrayItemsSelected[i].label + ',';
+              object.label += this.arrayItemsSelected[i].label + ', ';
               object.value += this.arrayItemsSelected[i].value + ',';
             }
             object.value = object.value.substring(0, object.value.length - 1);
