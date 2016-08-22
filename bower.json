@@ -20,7 +20,8 @@
     "iron-validatable-behavior": "^1.1.1",
     "gig-html": "^0.1.1",
     "gig-icon": "^0.1.1",
-    "Sortable": "^1.4.2"
+    "Sortable": "^1.4.2",
+    "iron-scroll-target-behavior": "^1.0.7"
   },
   "resolutions": {
     "polymer": "1.6.0"
